@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1976D2">
+    <title>AllO_G Коммуникатор</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+</head>
+<body>
+    <div id="app">
+        <!-- Верхняя секция -->
+        <header class="header">
+            <div class="header-left">
+                <div class="logo" onclick="showInfo()">AllO_G</div>
+            </div>
+            <div class="header-right">
+                <div class="protocols">
+                    <span class="protocol" id="protocol-I" data-protocol="internet">I</span>
+                    <span class="protocol" id="protocol-W" data-protocol="wifi">W</span>
+                    <span class="protocol" id="protocol-A" data-protocol="ap">A</span>
+                    <span class="protocol" id="protocol-Z" data-protocol="zigbee">Z</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Средняя секция - Участники -->
+        <main class="participants-section">
+            <div class="participants-list" id="participantsList">
+                <!-- Участники будут добавлены динамически -->
+            </div>
+        </main>
+
+        <!-- Нижняя секция - Действия -->
+        <footer class="actions-section">
+            <div class="action-btn" onclick="openDialer()">
+                <div class="action-icon">📞</div>
+                <div class="action-label">Набор</div>
+            </div>
+            <div class="action-btn" onclick="openSearch()">
+                <div class="action-icon">🔍</div>
+                <div class="action-label">Поиск</div>
+            </div>
+            <div class="action-btn" onclick="startGroupCall()">
+                <div class="action-icon">📞👥</div>
+                <div class="action-label">Группа</div>
+            </div>
+            <div class="action-btn" onclick="sendBroadcast()">
+                <div class="action-icon">📢</div>
+                <div class="action-label">Рассылка</div>
+            </div>
+            <div class="action-btn" onclick="openAnalytics()">
+                <div class="action-icon">📊</div>
+                <div class="action-label">Статистика</div>
+            </div>
+            <div class="action-btn" onclick="openSettings()">
+                <div class="action-icon">⚙️</div>
+                <div class="action-label">Настройки</div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Popup информации о приложении -->
+    <div class="popup-overlay" id="infoPopup" onclick="hideInfo()">
+        <div class="popup-content" onclick="event.stopPropagation()">
+            <div class="popup-header">
+                <h3>Коммуникатор AllO_G</h3>
+                <button class="popup-close" onclick="hideInfo()">×</button>
+            </div>
+            <div class="popup-body">
+                <div class="version">v1.0.0-alpha</div>
+                <div class="description">
+                    Гибридный коммуникатор для координации команд
+                </div>
+                <div class="features">
+                    <div>📞 Мультипротокольная связь</div>
+                    <div>👥 Управление участниками</div>
+                    <div>🌐 Локальные и интернет-соединения</div>
+                    <div>🎭 Ролевая система</div>
+                </div>
+                <div class="author">Автор: ZolAnd</div>
+                <div class="build">Build: 2024.01.15</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Меню участника -->
+    <div class="context-menu" id="participantMenu">
+        <div class="menu-item" onclick="editParticipant()">✏️ Редактировать</div>
+        <div class="menu-item" onclick="configureParticipant()">⚙️ Настроить</div>
+        <div class="menu-item" onclick="viewHistory()">📋 История</div>
+        <div class="menu-item danger" onclick="removeParticipant()">🗑️ Удалить</div>
+    </div>
+
+    <script src="participants.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
