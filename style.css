@@ -766,3 +766,58 @@ body::before {
         flex: none;
     }
 }
+
+/* Стили для заблокированных участников */
+.participant-avatar.blocked {
+    opacity: 0.5;
+    filter: grayscale(100%);
+}
+
+.blocked-overlay {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    font-size: 1.2rem;
+    z-index: 10;
+}
+
+.block-status {
+    font-size: 0.9rem;
+    font-weight: bold;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    margin-top: 0.5rem;
+}
+
+.block-status.blocked {
+    background: rgba(244, 67, 54, 0.2);
+    color: var(--danger);
+}
+
+.block-status.active {
+    background: rgba(76, 175, 80, 0.2);
+    color: var(--success);
+}
+
+.btn-warning {
+    background: var(--warning);
+    color: white;
+}
+
+.btn-warning:hover {
+    background: #e68900;
+}
+
+.menu-item.warning {
+    color: var(--warning);
+}
+
+.profile-actions button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.profile-actions button:disabled:hover {
+    background: var(--card-bg);
+    transform: none;
+}

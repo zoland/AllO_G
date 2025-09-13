@@ -104,6 +104,7 @@ class PopupManager {
         const lastSeenText = this.app.formatLastSeen(participant.status.lastSeen);
         const statusIcon = participant.status.online ? '🟢' : '🔴';
         const favoriteIcon = participant.isFavorite ? '⭐' : '☆';
+        const blockedStatus = participant.blocked ? '🚫 Заблокирован' : '✅ Активен';
         
         body.innerHTML = `
             <div class="profile-section">
@@ -112,6 +113,7 @@ class PopupManager {
                     <h3>${participant.callsign} ${favoriteIcon}</h3>
                     <p>${participant.realName || 'Имя не указано'}</p>
                     <p>📞 ${participant.phone}</p>
+                    <p class="block-status ${participant.blocked ? 'blocked' : 'active'}">${blockedStatus}</p>
                 </div>
             </div>
             
@@ -141,7 +143,7 @@ class PopupManager {
                 <h4>🔗 Протоколы связи</h4>
                 <div class="protocols-grid">
                     <div class="protocol-item ${participant.protocols.cellular ? 'active' : 'inactive'}">
-                        �� Сотовая связь
+                        📱 Сотовая связь
                     </div>
                     <div class="protocol-item ${participant.protocols.webrtc ? 'active' : 'inactive'}">
                         🌐 WebRTC
@@ -176,9 +178,19 @@ class PopupManager {
             </div>
             
             <div class="profile-actions">
-                <button class="btn-primary" onclick="makeCallFromProfile('${participant.id}')">📞 Позвонить</button>
-                <button class="btn-secondary" onclick="sendMessageFromProfile('${participant.id}')">💬 Сообщение</button>
+                <button class="btn-primary" onclick="makeCallFromProfile('${participant.id}')" ${participant.blocked ? 'disabled' : ''}>📞 Позвонить</button>
+                <button class="btn-secondary" onclick="sendMessageFromProfile('${participant.id}')" ${participant.blocked ? 'disabled' : ''}>💬 Сообщение</button>
+            </div>
+            
+            <div class="profile-actions">
+                <button class="btn-secondary" onclick="openHistoryFromProfile('${participant.id}')">📋 История</button>
+                <button class="btn-secondary" onclick="openRolesFromProfile('${participant.id}')">🎭 Роли</button>
+                <button class="btn-secondary" onclick="openCommunicationsFromProfile('${participant.id}')">📞 Связь</button>
+            </div>
+            
+            <div class="profile-actions">
                 <button class="btn-secondary" onclick="toggleFavoriteFromProfile('${participant.id}')">${participant.isFavorite ? '☆ Убрать из избранного' : '⭐ В избранное'}</button>
+                <button class="btn-warning" onclick="toggleBlockFromProfile('${participant.id}')">${participant.blocked ? '✅ Разблокировать' : '🚫 Заблокировать'}</button>
             </div>
         `;
     }
@@ -188,5 +200,17 @@ class PopupManager {
         if (popup) {
             popup.classList.remove('show');
         }
+    }
+}
+
+function toggleBlockFromProfile(participantId) {
+    const participant = app.participants.get(participantId);
+    if (participant) {
+        participant.blocked = !participant.blocked;
+        app.renderParticipants();
+        app.popupManager.showParticipantProfile(participantId);
+        
+        const status = participant.blocked ? 'заблокирован' : 'разблокирован';
+        app.showNotification(`${participant.blocked ? '🚫' : '✅'} ${participant.callsign} ${status}`);
     }
 }

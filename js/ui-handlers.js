@@ -27,11 +27,54 @@ function showParticipantMenu(event, participantId) {
     menu.dataset.participantId = participantId;
 }
 
-function viewParticipantProfile() {
+function openParticipantProfile(participantId) {
+    app.popupManager.showParticipantProfile(participantId);
+}
+
+function viewHistory() {
     const menu = document.getElementById('participantMenu');
     const participantId = menu.dataset.participantId;
+    const participant = app.participants.get(participantId);
     
-    app.popupManager.showParticipantProfile(participantId);
+    if (participant) {
+        app.showNotification(`📋 История связи с ${participant.callsign} (в разработке)`);
+    }
+    app.hideContextMenu();
+}
+
+function manageRoles() {
+    const menu = document.getElementById('participantMenu');
+    const participantId = menu.dataset.participantId;
+    const participant = app.participants.get(participantId);
+    
+    if (participant) {
+        app.showNotification(`🎭 Управление ролями ${participant.callsign} (в разработке)`);
+    }
+    app.hideContextMenu();
+}
+
+function manageCommunications() {
+    const menu = document.getElementById('participantMenu');
+    const participantId = menu.dataset.participantId;
+    const participant = app.participants.get(participantId);
+    
+    if (participant) {
+        app.showNotification(`📞 Настройки связи с ${participant.callsign} (в разработке)`);
+    }
+    app.hideContextMenu();
+}
+
+function toggleParticipantBlock() {
+    const menu = document.getElementById('participantMenu');
+    const participantId = menu.dataset.participantId;
+    const participant = app.participants.get(participantId);
+    
+    if (participant) {
+        participant.blocked = !participant.blocked;
+        const status = participant.blocked ? 'заблокирован' : 'разблокирован';
+        app.showNotification(`🚫 ${participant.callsign} ${status}`);
+        app.renderParticipants();
+    }
     app.hideContextMenu();
 }
 
@@ -51,14 +94,6 @@ function toggleFavorite() {
     app.hideContextMenu();
 }
 
-function viewHistory() {
-    const menu = document.getElementById('participantMenu');
-    const participantId = menu.dataset.participantId;
-    console.log(`📋 История участника: ${participantId}`);
-    app.showNotification('📋 История связи (в разработке)');
-    app.hideContextMenu();
-}
-
 function removeParticipant() {
     const menu = document.getElementById('participantMenu');
     const participantId = menu.dataset.participantId;
@@ -74,7 +109,7 @@ function removeParticipant() {
 }
 
 function openDialer() {
-    app.showNotification('�� Функции связи (в разработке)');
+    app.showNotification('📞 Функции связи (в разработке)');
 }
 
 function openGroupActions() {
@@ -86,7 +121,7 @@ function openMap() {
 }
 
 function openVoiceCommands() {
-    app.showNotification('🎤 Голосовые команды (в разработке)');
+    app.showNotification('�� Голосовые команды (в разработке)');
 }
 
 function openHelp() {
@@ -155,5 +190,29 @@ function toggleFavoriteFromProfile(participantId) {
         
         const status = participant.isFavorite ? 'добавлен в избранное' : 'удален из избранного';
         app.showNotification(`⭐ ${participant.callsign} ${status}`);
+    }
+}
+
+function openHistoryFromProfile(participantId) {
+    const participant = app.participants.get(participantId);
+    if (participant) {
+        app.popupManager.hideParticipantProfile();
+        app.showNotification(`📋 История связи с ${participant.callsign} (в разработке)`);
+    }
+}
+
+function openRolesFromProfile(participantId) {
+    const participant = app.participants.get(participantId);
+    if (participant) {
+        app.popupManager.hideParticipantProfile();
+        app.showNotification(`�� Управление ролями ${participant.callsign} (в разработке)`);
+    }
+}
+
+function openCommunicationsFromProfile(participantId) {
+    const participant = app.participants.get(participantId);
+    if (participant) {
+        app.popupManager.hideParticipantProfile();
+        app.showNotification(`📞 Настройки связи с ${participant.callsign} (в разработке)`);
     }
 }

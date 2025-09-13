@@ -8,7 +8,7 @@ class AllO_G_Communicator {
     }
 
     init() {
-        console.log('🚀 AllO_G v1.1.3 Коммуникатор запущен');
+        console.log('🚀 AllO_G v1.1.4 Коммуникатор запущен');
         this.loadParticipants();
         this.updateProtocolStatus();
         this.setupEventListeners();
@@ -54,9 +54,11 @@ class AllO_G_Communicator {
         const batteryIcon = this.getBatteryIcon(participant.status.battery);
         const lastSeenText = this.formatLastSeen(participant.status.lastSeen);
         const favoriteIcon = participant.isFavorite ? '<span class="favorite-star">⭐</span>' : '';
+        const blockedOverlay = participant.blocked ? '<div class="blocked-overlay">🚫</div>' : '';
 
         card.innerHTML = `
-            <div class="participant-avatar">${participant.avatar}</div>
+            ${blockedOverlay}
+            <div class="participant-avatar ${participant.blocked ? 'blocked' : ''}">${participant.avatar}</div>
             <div class="participant-info">
                 <div class="participant-name">
                     ${favoriteIcon}${participant.callsign}
@@ -77,6 +79,12 @@ class AllO_G_Communicator {
                 </div>
             </div>
         `;
+
+        card.addEventListener('click', (e) => {
+            if (!e.target.closest('.participant-menu')) {
+                this.popupManager.showParticipantProfile(participant.id);
+            }
+        });
 
         return card;
     }
@@ -101,7 +109,12 @@ class AllO_G_Communicator {
         const participant = this.participants.get(participantId);
         if (!participant) return;
 
-        console.log(`📞 Звонок участнику: ${participant.callsign}`);
+        if (participant.blocked) {
+            this.showNotification(`🚫 ${participant.callsign} заблокирован`);
+            return;
+        }
+
+        console.log(`�� Звонок участнику: ${participant.callsign}`);
         
         const protocol = this.getPreferredProtocol(participant);
         
@@ -120,6 +133,11 @@ class AllO_G_Communicator {
     sendMessage(participantId) {
         const participant = this.participants.get(participantId);
         if (!participant) return;
+
+        if (participant.blocked) {
+            this.showNotification(`🚫 ${participant.callsign} заблокирован`);
+            return;
+        }
 
         console.log(`💬 Сообщение участнику: ${participant.callsign}`);
         
@@ -280,6 +298,7 @@ class AllO_G_Communicator {
             phone: phone,
             avatar: '👤',
             isFavorite: isFavorite,
+            blocked: false,
             status: {
                 online: false,
                 lastSeen: new Date().toISOString(),
