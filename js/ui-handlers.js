@@ -31,15 +31,22 @@ function openParticipantProfile(participantId) {
     app.popupManager.showParticipantProfile(participantId);
 }
 
-function viewHistory() {
-    const menu = document.getElementById('participantMenu');
-    const participantId = menu.dataset.participantId;
-    const participant = app.participants.get(participantId);
-    
-    if (participant) {
-        app.showNotification(`📋 История связи с ${participant.callsign} (в разработке)`);
+function viewHistory(participantId) {
+    if (participantId) {
+        const participant = app.participants.get(participantId);
+        if (participant) {
+            app.showNotification(`📋 История связи с ${participant.callsign} (в разработке)`);
+        }
+    } else {
+        const menu = document.getElementById('participantMenu');
+        const menuParticipantId = menu.dataset.participantId;
+        const participant = app.participants.get(menuParticipantId);
+        
+        if (participant) {
+            app.showNotification(`📋 История связи с ${participant.callsign} (в разработке)`);
+        }
+        app.hideContextMenu();
     }
-    app.hideContextMenu();
 }
 
 function manageRoles() {
@@ -121,7 +128,7 @@ function openMap() {
 }
 
 function openVoiceCommands() {
-    app.showNotification('�� Голосовые команды (в разработке)');
+    app.showNotification('🎤 Голосовые команды (в разработке)');
 }
 
 function openHelp() {
@@ -173,12 +180,10 @@ function hideParticipantProfile() {
 
 function makeCallFromProfile(participantId) {
     app.makeCall(participantId);
-    app.popupManager.hideParticipantProfile();
 }
 
 function sendMessageFromProfile(participantId) {
     app.sendMessage(participantId);
-    app.popupManager.hideParticipantProfile();
 }
 
 function toggleFavoriteFromProfile(participantId) {
@@ -196,7 +201,6 @@ function toggleFavoriteFromProfile(participantId) {
 function openHistoryFromProfile(participantId) {
     const participant = app.participants.get(participantId);
     if (participant) {
-        app.popupManager.hideParticipantProfile();
         app.showNotification(`📋 История связи с ${participant.callsign} (в разработке)`);
     }
 }
@@ -204,15 +208,13 @@ function openHistoryFromProfile(participantId) {
 function openRolesFromProfile(participantId) {
     const participant = app.participants.get(participantId);
     if (participant) {
-        app.popupManager.hideParticipantProfile();
-        app.showNotification(`�� Управление ролями ${participant.callsign} (в разработке)`);
+        app.showNotification(`🎭 Управление ролями ${participant.callsign} (в разработке)`);
     }
 }
 
 function openCommunicationsFromProfile(participantId) {
     const participant = app.participants.get(participantId);
     if (participant) {
-        app.popupManager.hideParticipantProfile();
         app.showNotification(`📞 Настройки связи с ${participant.callsign} (в разработке)`);
     }
 }

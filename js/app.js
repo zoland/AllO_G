@@ -8,7 +8,7 @@ class AllO_G_Communicator {
     }
 
     init() {
-        console.log('🚀 AllO_G v1.1.4 Коммуникатор запущен');
+        console.log('🚀 AllO_G v1.1.5 Коммуникатор запущен');
         this.loadParticipants();
         this.updateProtocolStatus();
         this.setupEventListeners();
@@ -58,33 +58,37 @@ class AllO_G_Communicator {
 
         card.innerHTML = `
             ${blockedOverlay}
-            <div class="participant-avatar ${participant.blocked ? 'blocked' : ''}">${participant.avatar}</div>
-            <div class="participant-info">
-                <div class="participant-name">
-                    ${favoriteIcon}${participant.callsign}
+            <div class="participant-header" onclick="openParticipantProfile('${participant.id}')">
+                <div class="participant-avatar ${participant.blocked ? 'blocked' : ''}">${participant.avatar}</div>
+                <div class="participant-info">
+                    <div class="participant-name">
+                        ${favoriteIcon}${participant.callsign}
+                    </div>
+                    <div class="participant-details">
+                        <span>${participant.realName || 'Участник'}</span>
+                        <span>•</span>
+                        <span>${batteryIcon}${participant.status.battery}%</span>
+                        <span>•</span>
+                        <span>${lastSeenText}</span>
+                    </div>
                 </div>
-                <div class="participant-details">
-                    <span>${participant.realName || 'Участник'}</span>
-                    <span>•</span>
-                    <span>${batteryIcon}${participant.status.battery}%</span>
-                    <span>•</span>
-                    <span>${lastSeenText}</span>
+                <div class="participant-menu" onclick="showParticipantMenu(event, '${participant.id}')">
+                    <div class="menu-dots">
+                        <div class="menu-dot"></div>
+                        <div class="menu-dot"></div>
+                        <div class="menu-dot"></div>
+                    </div>
                 </div>
             </div>
-            <div class="participant-menu" onclick="showParticipantMenu(event, '${participant.id}')">
-                <div class="menu-dots">
-                    <div class="menu-dot"></div>
-                    <div class="menu-dot"></div>
-                    <div class="menu-dot"></div>
-                </div>
+            <div class="participant-actions">
+                <div class="action-icon ${participant.blocked ? 'disabled' : ''}" onclick="makeCall('${participant.id}')" title="Позвонить">📞</div>
+                <div class="action-icon ${participant.blocked ? 'disabled' : ''}" onclick="sendMessage('${participant.id}')" title="Сообщение">💬</div>
+                <div class="action-icon" onclick="showLocation('${participant.id}')" title="Местоположение">📍</div>
+                <div class="action-icon" onclick="viewHistory('${participant.id}')" title="История">📋</div>
+                <div class="action-icon ${participant.isFavorite ? 'active' : ''}" onclick="toggleFavoriteQuick('${participant.id}')" title="Избранное">${participant.isFavorite ? '⭐' : '☆'}</div>
+                <div class="action-icon ${participant.blocked ? 'active' : ''}" onclick="toggleBlockQuick('${participant.id}')" title="Блокировка">${participant.blocked ? '🚫' : '🔓'}</div>
             </div>
         `;
-
-        card.addEventListener('click', (e) => {
-            if (!e.target.closest('.participant-menu')) {
-                this.popupManager.showParticipantProfile(participant.id);
-            }
-        });
 
         return card;
     }
@@ -114,7 +118,7 @@ class AllO_G_Communicator {
             return;
         }
 
-        console.log(`�� Звонок участнику: ${participant.callsign}`);
+        console.log(`📞 Звонок участнику: ${participant.callsign}`);
         
         const protocol = this.getPreferredProtocol(participant);
         
@@ -152,6 +156,42 @@ class AllO_G_Communicator {
                 break;
             default:
                 window.location.href = `sms:${participant.phone}`;
+        }
+    }
+
+    showLocation(participantId) {
+        const participant = this.participants.get(participantId);
+        if (participant) {
+            this.showNotification(`📍 Местоположение ${participant.callsign}: ${participant.status.location}`);
+        }
+    }
+
+    viewHistory(participantId) {
+        const participant = this.participants.get(participantId);
+        if (participant) {
+            this.showNotification(`📋 История связи с ${participant.callsign} (в разработке)`);
+        }
+    }
+
+    toggleFavoriteQuick(participantId) {
+        const participant = this.participants.get(participantId);
+        if (participant) {
+            participant.isFavorite = !participant.isFavorite;
+            this.renderParticipants();
+            
+            const status = participant.isFavorite ? 'добавлен в избранное' : 'удален из избранного';
+            this.showNotification(`⭐ ${participant.callsign} ${status}`);
+        }
+    }
+
+    toggleBlockQuick(participantId) {
+        const participant = this.participants.get(participantId);
+        if (participant) {
+            participant.blocked = !participant.blocked;
+            this.renderParticipants();
+            
+            const status = participant.blocked ? 'заблокирован' : 'разблокирован';
+            this.showNotification(`${participant.blocked ? '🚫' : '✅'} ${participant.callsign} ${status}`);
         }
     }
 
@@ -243,7 +283,7 @@ class AllO_G_Communicator {
 
     getBatteryIcon(battery) {
         if (battery > 75) return '🔋';
-        if (battery > 50) return '🔋';
+        if (battery > 50) return '��';
         if (battery > 25) return '🪫';
         return '🪫';
     }
@@ -268,6 +308,15 @@ class AllO_G_Communicator {
         document.addEventListener('click', (e) => {
             if (!e.target.closest('.context-menu')) {
                 this.hideContextMenu();
+            }
+        });
+
+        // Обработка кнопки "Назад" для закрытия портфолио
+        window.addEventListener('popstate', (e) => {
+            const profilePopup = document.getElementById('participantProfilePopup');
+            if (profilePopup && profilePopup.classList.contains('show')) {
+                this.popupManager.hideParticipantProfile();
+                e.preventDefault();
             }
         });
 

@@ -69,6 +69,9 @@ class PopupManager {
         const participant = this.app.participants.get(participantId);
         if (!participant) return;
 
+        // Добавляем состояние в историю браузера для кнопки "Назад"
+        history.pushState({ profileOpen: true, participantId }, '', '');
+
         const popup = document.getElementById('participantProfilePopup');
         if (!popup) {
             this.createParticipantProfilePopup();
@@ -80,13 +83,18 @@ class PopupManager {
 
     createParticipantProfilePopup() {
         const popupHTML = `
-            <div class="popup-overlay" id="participantProfilePopup" onclick="hideParticipantProfile()">
+            <div class="popup-overlay" id="participantProfilePopup">
                 <div class="popup-content" onclick="event.stopPropagation()">
                     <div class="popup-header">
+                        <button class="back-btn" onclick="goBackFromProfile()" title="Назад">←</button>
                         <h3 id="profileTitle">Портфолио участника</h3>
-                        <button class="popup-close" onclick="hideParticipantProfile()">×</button>
+                        <button class="popup-close" onclick="closeProfileWithConfirm()">×</button>
                     </div>
                     <div class="popup-body" id="profileBody">
+                    </div>
+                    <div class="popup-footer">
+                        <button class="btn-secondary" onclick="goBackFromProfile()">← Назад</button>
+                        <button class="btn-primary" onclick="saveProfileChanges()">💾 Сохранить</button>
                     </div>
                 </div>
             </div>
@@ -162,7 +170,11 @@ class PopupManager {
                 <div class="settings-grid">
                     <div class="setting-item">
                         <span class="setting-label">Предпочитаемый протокол:</span>
-                        <span class="setting-value">${participant.preferences.preferredProtocol || 'Авто'}</span>
+                        <select id="preferredProtocol" class="setting-input">
+                            <option value="cellular" ${participant.preferences.preferredProtocol === 'cellular' ? 'selected' : ''}>Сотовая связь</option>
+                            <option value="webrtc" ${participant.preferences.preferredProtocol === 'webrtc' ? 'selected' : ''}>WebRTC</option>
+                            <option value="local_wifi" ${participant.preferences.preferredProtocol === 'local_wifi' ? 'selected' : ''}>Локальная сеть</option>
+                        </select>
                     </div>
                     <div class="setting-item">
                         <span class="setting-label">Тихие часы:</span>
@@ -172,25 +184,33 @@ class PopupManager {
                     </div>
                     <div class="setting-item">
                         <span class="setting-label">Геолокация:</span>
-                        <span class="setting-value">${participant.preferences.allowLocation ? '✅ Разрешена' : '❌ Запрещена'}</span>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="allowLocation" ${participant.preferences.allowLocation ? 'checked' : ''}>
+                            <span class="checkmark">📍</span>
+                            Разрешить
+                        </label>
                     </div>
                 </div>
             </div>
             
-            <div class="profile-actions">
-                <button class="btn-primary" onclick="makeCallFromProfile('${participant.id}')" ${participant.blocked ? 'disabled' : ''}>📞 Позвонить</button>
-                <button class="btn-secondary" onclick="sendMessageFromProfile('${participant.id}')" ${participant.blocked ? 'disabled' : ''}>💬 Сообщение</button>
-            </div>
-            
-            <div class="profile-actions">
-                <button class="btn-secondary" onclick="openHistoryFromProfile('${participant.id}')">📋 История</button>
-                <button class="btn-secondary" onclick="openRolesFromProfile('${participant.id}')">🎭 Роли</button>
-                <button class="btn-secondary" onclick="openCommunicationsFromProfile('${participant.id}')">📞 Связь</button>
-            </div>
-            
-            <div class="profile-actions">
-                <button class="btn-secondary" onclick="toggleFavoriteFromProfile('${participant.id}')">${participant.isFavorite ? '☆ Убрать из избранного' : '⭐ В избранное'}</button>
-                <button class="btn-warning" onclick="toggleBlockFromProfile('${participant.id}')">${participant.blocked ? '✅ Разблокировать' : '🚫 Заблокировать'}</button>
+            <div class="profile-section">
+                <h4>🎯 Быстрые действия</h4>
+                <div class="profile-actions">
+                    <button class="btn-primary" onclick="makeCallFromProfile('${participant.id}')" ${participant.blocked ? 'disabled' : ''}>📞 Позвонить</button>
+                    <button class="btn-secondary" onclick="sendMessageFromProfile('${participant.id}')" ${participant.blocked ? 'disabled' : ''}>💬 Сообщение</button>
+                    <button class="btn-secondary" onclick="showLocationFromProfile('${participant.id}')">📍 Местоположение</button>
+                </div>
+                
+                <div class="profile-actions">
+                    <button class="btn-secondary" onclick="openHistoryFromProfile('${participant.id}')">📋 История</button>
+                    <button class="btn-secondary" onclick="openRolesFromProfile('${participant.id}')">🎭 Роли</button>
+                    <button class="btn-secondary" onclick="openCommunicationsFromProfile('${participant.id}')">📞 Связь</button>
+                </div>
+                
+                <div class="profile-actions">
+                    <button class="btn-secondary" onclick="toggleFavoriteFromProfile('${participant.id}')">${participant.isFavorite ? '☆ Убрать из избранного' : '⭐ В избранное'}</button>
+                    <button class="btn-warning" onclick="toggleBlockFromProfile('${participant.id}')">${participant.blocked ? '✅ Разблокировать' : '🚫 Заблокировать'}</button>
+                </div>
             </div>
         `;
     }
@@ -200,9 +220,54 @@ class PopupManager {
         if (popup) {
             popup.classList.remove('show');
         }
+        
+        // Убираем состояние из истории браузера
+        if (history.state && history.state.profileOpen) {
+            history.back();
+        }
     }
 }
 
+// Глобальные функции для навигации в портфолио
+function goBackFromProfile() {
+    app.popupManager.hideParticipantProfile();
+}
+
+function closeProfileWithConfirm() {
+    // Проверяем есть ли несохраненные изменения
+    if (confirm('Закрыть портфолио? Несохраненные изменения будут потеряны.')) {
+        app.popupManager.hideParticipantProfile();
+    }
+}
+
+function saveProfileChanges() {
+    // Здесь будет логика сохранения изменений
+    const profilePopup = document.getElementById('participantProfilePopup');
+    const participantId = history.state?.participantId;
+    
+    if (participantId) {
+        const participant = app.participants.get(participantId);
+        if (participant) {
+            // Сохраняем изменения настроек
+            const preferredProtocol = document.getElementById('preferredProtocol')?.value;
+            const allowLocation = document.getElementById('allowLocation')?.checked;
+            
+            if (preferredProtocol) {
+                participant.preferences.preferredProtocol = preferredProtocol;
+            }
+            if (allowLocation !== undefined) {
+                participant.preferences.allowLocation = allowLocation;
+            }
+            
+            app.renderParticipants();
+            app.showNotification(`💾 Настройки ${participant.callsign} сохранены`);
+        }
+    }
+    
+    app.popupManager.hideParticipantProfile();
+}
+
+// Дополнительные функции для портфолио
 function toggleBlockFromProfile(participantId) {
     const participant = app.participants.get(participantId);
     if (participant) {
@@ -212,5 +277,12 @@ function toggleBlockFromProfile(participantId) {
         
         const status = participant.blocked ? 'заблокирован' : 'разблокирован';
         app.showNotification(`${participant.blocked ? '🚫' : '✅'} ${participant.callsign} ${status}`);
+    }
+}
+
+function showLocationFromProfile(participantId) {
+    const participant = app.participants.get(participantId);
+    if (participant) {
+        app.showNotification(`📍 Местоположение ${participant.callsign}: ${participant.status.location}`);
     }
 }

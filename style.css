@@ -821,3 +821,160 @@ body::before {
     background: var(--card-bg);
     transform: none;
 }
+
+/* Обновленные стили карточки участника */
+.participant-card {
+    background: var(--card-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.participant-card:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.participant-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    cursor: pointer;
+}
+
+.participant-actions {
+    display: flex;
+    justify-content: space-around;
+    padding: 0.75rem 1rem;
+    border-top: 1px solid var(--card-border);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.action-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--card-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1.1rem;
+}
+
+.action-icon:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.1);
+}
+
+.action-icon.active {
+    background: var(--success);
+    color: white;
+}
+
+.action-icon.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* Стили для портфолио с улучшенной навигацией */
+.popup-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--card-border);
+}
+
+.back-btn {
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s ease;
+}
+
+.back-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.popup-header h3 {
+    flex: 1;
+    margin: 0;
+    font-size: 1.3rem;
+    text-align: center;
+}
+
+.popup-footer {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.5rem;
+    border-top: 1px solid var(--card-border);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.popup-footer button {
+    flex: 1;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+/* Настройки в портфолио */
+.setting-input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid var(--card-border);
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    margin-top: 0.25rem;
+}
+
+.setting-input:focus {
+    outline: none;
+    border-color: var(--success);
+}
+
+/* Адаптивность для мобильных */
+@media (max-width: 480px) {
+    .participant-actions {
+        padding: 0.5rem;
+    }
+    
+    .action-icon {
+        width: 32px;
+        height: 32px;
+        font-size: 1rem;
+    }
+    
+    .popup-footer {
+        flex-direction: column;
+    }
+    
+    .popup-footer button {
+        flex: none;
+    }
+}
