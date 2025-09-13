@@ -632,3 +632,137 @@ body::before {
     background: rgba(255, 255, 255, 0.3);
     border-radius: 2px;
 }
+
+/* Стили для портфолио участника */
+.profile-section {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--card-border);
+}
+
+.profile-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.profile-section h4 {
+    margin-bottom: 0.75rem;
+    color: var(--text-primary);
+    font-size: 1rem;
+}
+
+.profile-basic {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-left: 1rem;
+}
+
+.profile-basic h3 {
+    margin: 0;
+    font-size: 1.3rem;
+    color: var(--text-primary);
+}
+
+.profile-basic p {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.profile-avatar {
+    font-size: 3rem;
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.status-grid,
+.protocols-grid,
+.settings-grid {
+    display: grid;
+    gap: 0.75rem;
+}
+
+.status-grid {
+    grid-template-columns: 1fr 1fr;
+}
+
+.protocols-grid {
+    grid-template-columns: 1fr 1fr;
+}
+
+.settings-grid {
+    grid-template-columns: 1fr;
+}
+
+.status-item,
+.setting-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.status-label,
+.setting-label {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    font-weight: bold;
+}
+
+.status-value,
+.setting-value {
+    font-size: 0.9rem;
+    color: var(--text-primary);
+}
+
+.protocol-item {
+    padding: 0.5rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    text-align: center;
+    border: 1px solid var(--card-border);
+}
+
+.protocol-item.active {
+    background: rgba(76, 175, 80, 0.2);
+    border-color: var(--success);
+    color: var(--success);
+}
+
+.protocol-item.inactive {
+    background: var(--card-bg);
+    color: var(--text-secondary);
+}
+
+.profile-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.profile-actions button {
+    flex: 1;
+    min-width: 120px;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+@media (max-width: 480px) {
+    .status-grid,
+    .protocols-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .profile-actions {
+        flex-direction: column;
+    }
+    
+    .profile-actions button {
+        flex: none;
+    }
+}
