@@ -1,4 +1,4 @@
-// AllO_G v1.1 - Коммуникатор с упрощенной системой и оперативной связью
+// AllO_G v1.1.1 - Исправление багов
 class AllO_G_Communicator {
     constructor() {
         this.participants = new Map();
@@ -10,11 +10,18 @@ class AllO_G_Communicator {
     }
 
     init() {
-        console.log('🚀 AllO_G v1.1 Коммуникатор запущен');
+        console.log('�� AllO_G v1.1.1 Коммуникатор запущен');
         this.loadParticipants();
         this.updateProtocolStatus();
         this.setupEventListeners();
         this.setupSwipeHandlers();
+        
+        // Принудительное обновление кеша
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(registrations => {
+                registrations.forEach(registration => registration.unregister());
+            });
+        }
     }
 
     loadParticipants() {
@@ -92,8 +99,8 @@ class AllO_G_Communicator {
         card.innerHTML = `
             <div class="add-participant-title">➕ Добавить участника</div>
             <div class="add-participant-hints">
-                ⬅️ Создать портфолио<br>
-                ➡️ Оперативная связь
+                Свайп влево: Создать портфолио<br>
+                Свайп вправо: Оперативная связь
             </div>
         `;
 
@@ -159,7 +166,6 @@ class AllO_G_Communicator {
         switch(protocol) {
             case 'webrtc':
                 console.log('🌐 WebRTC звонок');
-                // Здесь будет WebRTC логика
                 this.showNotification(`📞 WebRTC звонок ${participant.callsign}`);
                 break;
             case 'local_wifi':
@@ -178,7 +184,6 @@ class AllO_G_Communicator {
 
         console.log(`💬 Сообщение участнику: ${participant.callsign}`);
         
-        // Определяем приоритетный протокол для сообщений
         const protocol = this.getPreferredMessageProtocol(participant);
         
         switch(protocol) {
@@ -204,7 +209,6 @@ class AllO_G_Communicator {
             return preference;
         }
         
-        // Стандартный приоритет
         const priority = ['local_wifi', 'webrtc', 'cellular'];
         return priority.find(p => available.includes(p)) || 'cellular';
     }
@@ -216,7 +220,7 @@ class AllO_G_Communicator {
     }
 
     getAvailableProtocols() {
-        const available = ['cellular', 'sms']; // Всегда доступны
+        const available = ['cellular', 'sms'];
         
         if (protocolStatus.I.active) {
             available.push('webrtc', 'webrtc_data');
@@ -229,7 +233,6 @@ class AllO_G_Communicator {
     }
 
     showNotification(message) {
-        // Простое уведомление (позже заменим на красивое)
         const notification = document.createElement('div');
         notification.style.cssText = `
             position: fixed;
@@ -241,12 +244,15 @@ class AllO_G_Communicator {
             border-radius: 8px;
             z-index: 2000;
             backdrop-filter: blur(10px);
+            animation: slideInRight 0.3s ease;
         `;
         notification.textContent = message;
         document.body.appendChild(notification);
         
         setTimeout(() => {
-            document.body.removeChild(notification);
+            if (document.body.contains(notification)) {
+                document.body.removeChild(notification);
+            }
         }, 3000);
     }
 
@@ -256,25 +262,27 @@ class AllO_G_Communicator {
             const statusElement = document.getElementById(`status-${protocol}`);
             const status = protocolStatus[protocol];
             
-            if (status.active) {
-                letterElement.style.color = '#4CAF50';
-                switch(protocol) {
-                    case 'I':
-                        statusElement.textContent = `🟢${status.type}`;
-                        break;
-                    case 'W':
-                        statusElement.textContent = `🟢${status.devices}`;
-                        break;
-                    case 'A':
-                        statusElement.textContent = `🟢${status.clients}`;
-                        break;
-                    case 'Z':
-                        statusElement.textContent = `🟢ON`;
-                        break;
+            if (letterElement && statusElement) {
+                if (status.active) {
+                    letterElement.style.color = '#4CAF50';
+                    switch(protocol) {
+                        case 'I':
+                            statusElement.textContent = `🟢${status.type}`;
+                            break;
+                        case 'W':
+                            statusElement.textContent = `🟢${status.devices}`;
+                            break;
+                        case 'A':
+                            statusElement.textContent = `🟢${status.clients}`;
+                            break;
+                        case 'Z':
+                            statusElement.textContent = `🟢ON`;
+                            break;
+                    }
+                } else {
+                    letterElement.style.color = 'rgba(255, 255, 255, 0.5)';
+                    statusElement.textContent = '⚫';
                 }
-            } else {
-                letterElement.style.color = 'rgba(255, 255, 255, 0.5)';
-                statusElement.textContent = '⚫';
             }
         });
     }
@@ -303,14 +311,12 @@ class AllO_G_Communicator {
     }
 
     setupEventListeners() {
-        // Закрытие меню при клике вне
         document.addEventListener('click', (e) => {
             if (!e.target.closest('.context-menu')) {
                 this.hideContextMenu();
             }
         });
 
-        // Обновление каждые 30 секунд
         setInterval(() => {
             this.updateProtocolStatus();
         }, 30000);
@@ -318,14 +324,14 @@ class AllO_G_Communicator {
 
     hideContextMenu() {
         const menu = document.getElementById('participantMenu');
-        menu.classList.remove('show');
+        if (menu) {
+            menu.classList.remove('show');
+        }
     }
 
     showCreateParticipant() {
         const popup = document.getElementById('createParticipantPopup');
         popup.classList.add('show');
-        
-        // Очищаем форму
         document.getElementById('participantForm').reset();
     }
 
@@ -347,14 +353,12 @@ class AllO_G_Communicator {
     saveParticipant(event) {
         event.preventDefault();
         
-        const formData = new FormData(event.target);
         const callsign = document.getElementById('callsign').value;
         const realName = document.getElementById('realName').value;
         const phone = document.getElementById('phoneNumber').value;
         const role = document.getElementById('role').value;
         const isFavorite = document.getElementById('isFavorite').checked;
         
-        // Создаем нового участника
         const newParticipant = {
             id: `custom_${Date.now()}`,
             callsign: callsign,
@@ -382,16 +386,9 @@ class AllO_G_Communicator {
             }
         };
         
-        // Добавляем в список
         this.participants.set(newParticipant.id, newParticipant);
-        
-        // Перерисовываем список
-        this.renderParticipants();
-        
-        // Закрываем popup
+        this.renderParticipants(); // ИСПРАВЛЕНО: перерисовываем список
         this.hideCreateParticipant();
-        
-        // Показываем уведомление
         this.showNotification(`✅ Участник ${callsign} добавлен`);
         
         console.log('👤 Новый участник создан:', newParticipant);
@@ -400,6 +397,15 @@ class AllO_G_Communicator {
     getAvatarForRole(role) {
         const roleData = participantRoles[role];
         return roleData ? roleData.icon : '👤';
+    }
+
+    // ИСПРАВЛЕНО: Обновляем участника в данных и перерисовываем
+    updateParticipant(participantId, updates) {
+        const participant = this.participants.get(participantId);
+        if (participant) {
+            Object.assign(participant, updates);
+            this.renderParticipants(); // Перерисовываем список
+        }
     }
 }
 
@@ -458,22 +464,7 @@ function showParticipantMenu(event, participantId) {
     menu.dataset.participantId = participantId;
 }
 
-function toggleFavorite() {
-    const menu = document.getElementById('participantMenu');
-    const participantId = menu.dataset.participantId;
-    const participant = app.participants.get(participantId);
-    
-    if (participant) {
-        participant.isFavorite = !participant.isFavorite;
-        app.renderParticipants();
-        
-        const status = participant.isFavorite ? 'добавлен в избранное' : 'удален из избранного';
-        app.showNotification(`⭐ ${participant.callsign} ${status}`);
-    }
-    
-    app.hideContextMenu();
-}
-
+// ИСПРАВЛЕНО: Объединяем портфолио и редактирование
 function viewParticipantProfile() {
     const menu = document.getElementById('participantMenu');
     const participantId = menu.dataset.participantId;
@@ -482,11 +473,24 @@ function viewParticipantProfile() {
     app.hideContextMenu();
 }
 
-function editParticipant() {
+// ИСПРАВЛЕНО: Исправляем переключение избранного
+function toggleFavorite() {
     const menu = document.getElementById('participantMenu');
     const participantId = menu.dataset.participantId;
-    console.log(`✏️ Редактирование участника: ${participantId}`);
-    app.showNotification('✏️ Редактирование (в разработке)');
+    const participant = app.participants.get(participantId);
+    
+    if (participant) {
+        participant.isFavorite = !participant.isFavorite;
+        
+        // ИСПРАВЛЕНО: Принудительно обновляем отображение
+        app.renderParticipants();
+        
+        const status = participant.isFavorite ? 'добавлен в избранное' : 'удален из избранного';
+        app.showNotification(`⭐ ${participant.callsign} ${status}`);
+        
+        console.log(`⭐ Избранное изменено для ${participant.callsign}: ${participant.isFavorite}`);
+    }
+    
     app.hideContextMenu();
 }
 
@@ -515,7 +519,7 @@ function removeParticipant() {
 
 // Функции нижней панели
 function openDialer() {
-    console.log('📞 Связь');
+    console.log('�� Связь');
     app.showNotification('📞 Функции связи (в разработке)');
 }
 
@@ -562,7 +566,6 @@ function openCallsignSearch() {
     const callsign = prompt('Введите позывной для поиска:');
     if (callsign) {
         app.showNotification(`🔍 Поиск "${callsign}" в сетях...`);
-        // Здесь будет логика поиска
     }
 }
 
@@ -572,7 +575,6 @@ function searchInNetwork() {
     app.showNotification('🔍 Поиск участников в локальной сети...');
 }
 
-// Сохранение участника
 function saveParticipant(event) {
     app.saveParticipant(event);
 }

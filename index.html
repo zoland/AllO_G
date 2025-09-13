@@ -10,7 +10,6 @@
 </head>
 <body>
     <div id="app">
-        <!-- Верхняя секция -->
         <header class="header">
             <div class="header-left">
                 <div class="logo" onclick="showInfo()">AllO_G</div>
@@ -37,14 +36,11 @@
             </div>
         </header>
 
-        <!-- Средняя секция - Участники -->
         <main class="participants-section">
             <div class="participants-list" id="participantsList">
-                <!-- Участники будут добавлены динамически -->
             </div>
         </main>
 
-        <!-- Нижняя панель - Адаптивная -->
         <footer class="actions-section" id="actionsSection">
             <div class="action-btn" onclick="openDialer()">
                 <div class="action-icon">📞</div>
@@ -73,7 +69,6 @@
         </footer>
     </div>
 
-    <!-- Popup информации о приложении -->
     <div class="popup-overlay" id="infoPopup" onclick="hideInfo()">
         <div class="popup-content" onclick="event.stopPropagation()">
             <div class="popup-header">
@@ -81,13 +76,13 @@
                 <button class="popup-close" onclick="hideInfo()">×</button>
             </div>
             <div class="popup-body">
-                <div class="version">v1.1.0-alpha</div>
+                <div class="version">v1.1.1</div>
                 <div class="description">
                     Гибридный коммуникатор для координации команд
                 </div>
                 <div class="features">
                     <div>📞 Мультипротокольная связь</div>
-                    <div>👥 Управление участниками</div>
+                    <div>�� Управление участниками</div>
                     <div>🌐 Локальные и интернет-соединения</div>
                     <div>🎭 Ролевая система</div>
                     <div>⭐ Система избранного</div>
@@ -102,7 +97,6 @@
         </div>
     </div>
 
-    <!-- Popup информации о протоколе -->
     <div class="popup-overlay" id="protocolPopup" onclick="hideProtocolInfo()">
         <div class="popup-content small" onclick="event.stopPropagation()">
             <div class="popup-header">
@@ -110,12 +104,10 @@
                 <button class="popup-close" onclick="hideProtocolInfo()">×</button>
             </div>
             <div class="popup-body" id="protocolInfo">
-                <!-- Информация о протоколе -->
             </div>
         </div>
     </div>
 
-    <!-- Форма создания участника -->
     <div class="popup-overlay" id="createParticipantPopup" onclick="hideCreateParticipant()">
         <div class="popup-content" onclick="event.stopPropagation()">
             <div class="popup-header">
@@ -163,7 +155,6 @@
         </div>
     </div>
 
-    <!-- Меню оперативной связи -->
     <div class="popup-overlay" id="quickContactPopup" onclick="hideQuickContact()">
         <div class="popup-content" onclick="event.stopPropagation()">
             <div class="popup-header">
@@ -198,16 +189,21 @@
         </div>
     </div>
 
-    <!-- Контекстное меню участника -->
     <div class="context-menu" id="participantMenu">
         <div class="menu-item" onclick="viewParticipantProfile()">👤 Портфолио</div>
-        <div class="menu-item" onclick="editParticipant()">✏️ Редактировать</div>
         <div class="menu-item" onclick="toggleFavorite()">⭐ Избранное</div>
         <div class="menu-item" onclick="viewHistory()">📋 История</div>
-        <div class="menu-item danger" onclick="removeParticipant()">🗑️ Удалить</div>
+        <div class="menu-item danger" onclick="removeParticipant()">��️ Удалить</div>
     </div>
 
     <script src="participants.js"></script>
     <script src="app.js"></script>
+    <script>
+        if ("serviceWorker" in navigator) {
+            navigator.serviceWorker.register("sw.js").then(() => {
+                console.log("SW зарегистрирован");
+            });
+        }
+    </script>
 </body>
 </html>
