@@ -1,4 +1,3 @@
-// AllO_G v1.1.1 - Исправление багов
 class AllO_G_Communicator {
     constructor() {
         this.participants = new Map();
@@ -10,13 +9,12 @@ class AllO_G_Communicator {
     }
 
     init() {
-        console.log('�� AllO_G v1.1.1 Коммуникатор запущен');
+        console.log('🚀 AllO_G v1.1.2 Коммуникатор запущен');
         this.loadParticipants();
         this.updateProtocolStatus();
         this.setupEventListeners();
         this.setupSwipeHandlers();
         
-        // Принудительное обновление кеша
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.getRegistrations().then(registrations => {
                 registrations.forEach(registration => registration.unregister());
@@ -35,20 +33,17 @@ class AllO_G_Communicator {
         const container = document.getElementById('participantsList');
         container.innerHTML = '';
 
-        // Сортируем: сначала избранные, потом обычные
         const sortedParticipants = Array.from(this.participants.values()).sort((a, b) => {
             if (a.isFavorite && !b.isFavorite) return -1;
             if (!a.isFavorite && b.isFavorite) return 1;
             return a.callsign.localeCompare(b.callsign);
         });
 
-        // Добавляем участников
         sortedParticipants.forEach(participant => {
             const card = this.createParticipantCard(participant);
             container.appendChild(card);
         });
 
-        // Добавляем карточку создания нового участника
         const addCard = this.createAddParticipantCard();
         container.appendChild(addCard);
     }
@@ -62,8 +57,6 @@ class AllO_G_Communicator {
         const batteryIcon = this.getBatteryIcon(participant.status.battery);
         const lastSeenText = this.formatLastSeen(participant.status.lastSeen);
         const favoriteIcon = participant.isFavorite ? '<span class="favorite-star">⭐</span>' : '';
-        const roleInfo = participantRoles[participant.role];
-        const roleText = roleInfo ? roleInfo.name : 'Участник';
 
         card.innerHTML = `
             <div class="participant-avatar">${participant.avatar}</div>
@@ -72,7 +65,7 @@ class AllO_G_Communicator {
                     ${favoriteIcon}${participant.callsign}
                 </div>
                 <div class="participant-details">
-                    <span>${participant.realName || roleText}</span>
+                    <span>${participant.realName || 'Участник'}</span>
                     <span>•</span>
                     <span>${batteryIcon}${participant.status.battery}%</span>
                     <span>•</span>
@@ -121,28 +114,21 @@ class AllO_G_Communicator {
             const deltaX = touchEndX - this.touchStartX;
             const deltaY = touchEndY - this.touchStartY;
 
-            // Проверяем что это горизонтальный свайп
             if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > this.swipeThreshold) {
                 const target = e.target.closest('.participant-card, .add-participant-card');
                 
                 if (target) {
                     if (target.id === 'addParticipantCard') {
-                        // Свайпы на карточке добавления
                         if (deltaX > 0) {
-                            // Свайп вправо - оперативная связь
                             this.showQuickContact();
                         } else {
-                            // Свайп влево - создать портфолио
                             this.showCreateParticipant();
                         }
                     } else {
-                        // Свайпы на карточке участника
                         const participantId = target.dataset.participantId;
                         if (deltaX > 0) {
-                            // Свайп вправо - сообщение
                             this.sendMessage(participantId);
                         } else {
-                            // Свайп влево - звонок
                             this.makeCall(participantId);
                         }
                     }
@@ -160,7 +146,6 @@ class AllO_G_Communicator {
 
         console.log(`📞 Звонок участнику: ${participant.callsign}`);
         
-        // Определяем приоритетный протокол
         const protocol = this.getPreferredProtocol(participant);
         
         switch(protocol) {
@@ -290,7 +275,7 @@ class AllO_G_Communicator {
     getBatteryIcon(battery) {
         if (battery > 75) return '🔋';
         if (battery > 50) return '🔋';
-        if (battery > 25) return '🪫';
+        if (battery > 25) return '��';
         return '🪫';
     }
 
@@ -356,7 +341,6 @@ class AllO_G_Communicator {
         const callsign = document.getElementById('callsign').value;
         const realName = document.getElementById('realName').value;
         const phone = document.getElementById('phoneNumber').value;
-        const role = document.getElementById('role').value;
         const isFavorite = document.getElementById('isFavorite').checked;
         
         const newParticipant = {
@@ -364,8 +348,7 @@ class AllO_G_Communicator {
             callsign: callsign,
             realName: realName,
             phone: phone,
-            role: role || 'participant',
-            avatar: this.getAvatarForRole(role),
+            avatar: '👤',
             isFavorite: isFavorite,
             status: {
                 online: false,
@@ -387,29 +370,14 @@ class AllO_G_Communicator {
         };
         
         this.participants.set(newParticipant.id, newParticipant);
-        this.renderParticipants(); // ИСПРАВЛЕНО: перерисовываем список
+        this.renderParticipants();
         this.hideCreateParticipant();
         this.showNotification(`✅ Участник ${callsign} добавлен`);
         
         console.log('👤 Новый участник создан:', newParticipant);
     }
-
-    getAvatarForRole(role) {
-        const roleData = participantRoles[role];
-        return roleData ? roleData.icon : '👤';
-    }
-
-    // ИСПРАВЛЕНО: Обновляем участника в данных и перерисовываем
-    updateParticipant(participantId, updates) {
-        const participant = this.participants.get(participantId);
-        if (participant) {
-            Object.assign(participant, updates);
-            this.renderParticipants(); // Перерисовываем список
-        }
-    }
 }
 
-// Глобальные функции для UI
 function showInfo() {
     const popup = document.getElementById('infoPopup');
     popup.classList.add('show');
@@ -464,7 +432,6 @@ function showParticipantMenu(event, participantId) {
     menu.dataset.participantId = participantId;
 }
 
-// ИСПРАВЛЕНО: Объединяем портфолио и редактирование
 function viewParticipantProfile() {
     const menu = document.getElementById('participantMenu');
     const participantId = menu.dataset.participantId;
@@ -473,7 +440,6 @@ function viewParticipantProfile() {
     app.hideContextMenu();
 }
 
-// ИСПРАВЛЕНО: Исправляем переключение избранного
 function toggleFavorite() {
     const menu = document.getElementById('participantMenu');
     const participantId = menu.dataset.participantId;
@@ -481,8 +447,6 @@ function toggleFavorite() {
     
     if (participant) {
         participant.isFavorite = !participant.isFavorite;
-        
-        // ИСПРАВЛЕНО: Принудительно обновляем отображение
         app.renderParticipants();
         
         const status = participant.isFavorite ? 'добавлен в избранное' : 'удален из избранного';
@@ -517,9 +481,8 @@ function removeParticipant() {
     app.hideContextMenu();
 }
 
-// Функции нижней панели
 function openDialer() {
-    console.log('�� Связь');
+    console.log('📞 Связь');
     app.showNotification('📞 Функции связи (в разработке)');
 }
 
@@ -548,7 +511,6 @@ function openSettings() {
     app.showNotification('⚙️ Настройки (в разработке)');
 }
 
-// Функции оперативной связи
 function openIncognitoCall() {
     console.log('📞 Инкогнито звонок');
     app.hideQuickContact();
@@ -587,7 +549,6 @@ function hideQuickContact() {
     app.hideQuickContact();
 }
 
-// Инициализация приложения
 let app;
 document.addEventListener('DOMContentLoaded', () => {
     app = new AllO_G_Communicator();

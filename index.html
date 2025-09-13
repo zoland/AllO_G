@@ -76,7 +76,7 @@
                 <button class="popup-close" onclick="hideInfo()">×</button>
             </div>
             <div class="popup-body">
-                <div class="version">v1.1.1</div>
+                <div class="version">v1.1.2</div>
                 <div class="description">
                     Гибридный коммуникатор для координации команд
                 </div>
@@ -84,7 +84,7 @@
                     <div>📞 Мультипротокольная связь</div>
                     <div>�� Управление участниками</div>
                     <div>🌐 Локальные и интернет-соединения</div>
-                    <div>🎭 Ролевая система</div>
+                    <div>🎭 Гибкая система ролей в сценах</div>
                     <div>⭐ Система избранного</div>
                     <div>📢 Вызов по позывным</div>
                 </div>
@@ -127,17 +127,6 @@
                     <div class="form-group">
                         <label>Номер телефона *</label>
                         <input type="tel" id="phoneNumber" placeholder="+7 (999) 123-45-67" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Роль</label>
-                        <select id="role">
-                            <option value="">Выберите роль</option>
-                            <option value="coordinator">Координатор</option>
-                            <option value="scout">Разведчик</option>
-                            <option value="medic">Медик</option>
-                            <option value="tech">Техник</option>
-                            <option value="security">Безопасность</option>
-                        </select>
                     </div>
                     <div class="form-group checkbox-group">
                         <label class="checkbox-label">
@@ -193,7 +182,7 @@
         <div class="menu-item" onclick="viewParticipantProfile()">👤 Портфолио</div>
         <div class="menu-item" onclick="toggleFavorite()">⭐ Избранное</div>
         <div class="menu-item" onclick="viewHistory()">📋 История</div>
-        <div class="menu-item danger" onclick="removeParticipant()">��️ Удалить</div>
+        <div class="menu-item danger" onclick="removeParticipant()">🗑️ Удалить</div>
     </div>
 
     <script src="participants.js"></script>

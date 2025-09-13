@@ -1,9 +1,7 @@
-// AllO_G v1.1 - Участники с упрощенной системой избранного
 const testParticipants = [
     {
         id: "alpha_001",
         callsign: "🎭 Альфа",
-        role: "coordinator",
         realName: "Иван Петров",
         phone: "+7999123456",
         avatar: "🎭",
@@ -29,7 +27,6 @@ const testParticipants = [
     {
         id: "bravo_002", 
         callsign: "🎯 Браво",
-        role: "scout",
         realName: "Анна Сидорова",
         phone: "+7988654321",
         avatar: "🎯",
@@ -55,7 +52,6 @@ const testParticipants = [
     {
         id: "charlie_003",
         callsign: "🛡️ Чарли", 
-        role: "security",
         realName: "Михаил Козлов",
         phone: "+7977555444",
         avatar: "🛡️",
@@ -81,7 +77,6 @@ const testParticipants = [
     {
         id: "delta_004",
         callsign: "🔧 Дельта",
-        role: "tech",
         realName: "Елена Морозова", 
         phone: "+7966333222",
         avatar: "🔧",
@@ -106,30 +101,29 @@ const testParticipants = [
     }
 ];
 
-// Состояние протоколов связи
 const protocolStatus = {
-    I: { // Internet
+    I: {
         active: true,
         quality: "good",
         type: "4G",
         description: "Мобильный интернет",
         details: "Скорость: хорошая\nТрафик: безлимит\nЗадержка: 50ms"
     },
-    W: { // WiFi Local
+    W: {
         active: false,
         devices: 0,
         network: "AllO_Local",
         description: "Локальная WiFi сеть",
         details: "Статус: не подключен\nДоступные сети: 0\nРекомендация: подключитесь к WiFi"
     },
-    A: { // Access Point
+    A: {
         active: false,
         clients: 0,
         ssid: "AllO_AP_Alpha",
         description: "Точка доступа",
         details: "Статус: выключена\nКлиенты: 0\nРекомендация: создайте точку доступа для команды"
     },
-    Z: { // ZigBee
+    Z: {
         active: false,
         mesh: false,
         description: "ZigBee сеть",
@@ -137,11 +131,19 @@ const protocolStatus = {
     }
 };
 
-// Роли участников
-const participantRoles = {
-    coordinator: { name: "Координатор", icon: "🎭", color: "#2196F3" },
-    scout: { name: "Разведчик", icon: "🎯", color: "#FF9800" },
-    medic: { name: "Медик", icon: "🏥", color: "#F44336" },
-    tech: { name: "Техник", icon: "🔧", color: "#4CAF50" },
-    security: { name: "Безопасность", icon: "🛡️", color: "#9C27B0" }
+const futureScenes = {
+    current: null,
+    available: [
+        {
+            id: "mountain_hike_2024",
+            name: "Поход в горы 2024",
+            description: "Зимний поход в горы с командой",
+            roles: {
+                "alpha_001": ["leader", "navigator"],
+                "bravo_002": ["medic", "photographer"], 
+                "charlie_003": ["security", "cook"],
+                "delta_004": ["tech", "equipment"]
+            }
+        }
+    ]
 };
