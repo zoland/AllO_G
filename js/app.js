@@ -12,12 +12,6 @@ class AllO_G_Communicator {
         this.loadParticipants();
         this.updateProtocolStatus();
         this.setupEventListeners();
-        
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.getRegistrations().then(registrations => {
-                registrations.forEach(registration => registration.unregister());
-            });
-        }
     }
 
     loadParticipants() {
@@ -81,12 +75,12 @@ class AllO_G_Communicator {
                 </div>
             </div>
             <div class="participant-actions">
-                <div class="action-icon ${participant.blocked ? 'disabled' : ''}" onclick="makeCall('${participant.id}')" title="Позвонить">📞</div>
-                <div class="action-icon ${participant.blocked ? 'disabled' : ''}" onclick="sendMessage('${participant.id}')" title="Сообщение">💬</div>
-                <div class="action-icon" onclick="showLocation('${participant.id}')" title="Местоположение">📍</div>
-                <div class="action-icon" onclick="viewHistory('${participant.id}')" title="История">📋</div>
-                <div class="action-icon ${participant.isFavorite ? 'active' : ''}" onclick="toggleFavoriteQuick('${participant.id}')" title="Избранное">${participant.isFavorite ? '⭐' : '☆'}</div>
-                <div class="action-icon ${participant.blocked ? 'active' : ''}" onclick="toggleBlockQuick('${participant.id}')" title="Блокировка">${participant.blocked ? '🚫' : '🔓'}</div>
+                <div class="action-icon ${participant.blocked ? 'disabled' : ''}" onclick="app.makeCall('${participant.id}')" title="Позвонить">📞</div>
+                <div class="action-icon ${participant.blocked ? 'disabled' : ''}" onclick="app.sendMessage('${participant.id}')" title="Сообщение">💬</div>
+                <div class="action-icon" onclick="app.showLocation('${participant.id}')" title="Местоположение">��</div>
+                <div class="action-icon" onclick="app.viewHistory('${participant.id}')" title="История">📋</div>
+                <div class="action-icon ${participant.isFavorite ? 'active' : ''}" onclick="app.toggleFavoriteQuick('${participant.id}')" title="Избранное">${participant.isFavorite ? '⭐' : '☆'}</div>
+                <div class="action-icon ${participant.blocked ? 'active' : ''}" onclick="app.toggleBlockQuick('${participant.id}')" title="Блокировка">${participant.blocked ? '🚫' : '🔓'}</div>
             </div>
         `;
 
@@ -119,19 +113,7 @@ class AllO_G_Communicator {
         }
 
         console.log(`📞 Звонок участнику: ${participant.callsign}`);
-        
-        const protocol = this.getPreferredProtocol(participant);
-        
-        switch(protocol) {
-            case 'webrtc':
-                this.showNotification(`📞 WebRTC звонок ${participant.callsign}`);
-                break;
-            case 'local_wifi':
-                this.showNotification(`📶 Локальный звонок ${participant.callsign}`);
-                break;
-            default:
-                window.location.href = `tel:${participant.phone}`;
-        }
+        window.location.href = `tel:${participant.phone}`;
     }
 
     sendMessage(participantId) {
@@ -144,19 +126,7 @@ class AllO_G_Communicator {
         }
 
         console.log(`💬 Сообщение участнику: ${participant.callsign}`);
-        
-        const protocol = this.getPreferredMessageProtocol(participant);
-        
-        switch(protocol) {
-            case 'local_chat':
-                this.showNotification(`💬 Локальное сообщение ${participant.callsign}`);
-                break;
-            case 'webrtc_data':
-                this.showNotification(`🌐 WebRTC сообщение ${participant.callsign}`);
-                break;
-            default:
-                window.location.href = `sms:${participant.phone}`;
-        }
+        window.location.href = `sms:${participant.phone}`;
     }
 
     showLocation(participantId) {
@@ -169,7 +139,7 @@ class AllO_G_Communicator {
     viewHistory(participantId) {
         const participant = this.participants.get(participantId);
         if (participant) {
-            this.showNotification(`📋 История связи с ${participant.callsign} (в разработке)`);
+            this.showNotification(`�� История связи с ${participant.callsign} (в разработке)`);
         }
     }
 
@@ -191,39 +161,8 @@ class AllO_G_Communicator {
             this.renderParticipants();
             
             const status = participant.blocked ? 'заблокирован' : 'разблокирован';
-            this.showNotification(`${participant.blocked ? '🚫' : '✅'} ${participant.callsign} ${status}`);
+            this.showNotification(`${participant.blocked ? '��' : '✅'} ${participant.callsign} ${status}`);
         }
-    }
-
-    getPreferredProtocol(participant) {
-        const preference = participant.preferences?.preferredProtocol;
-        const available = this.getAvailableProtocols();
-        
-        if (preference && available.includes(preference)) {
-            return preference;
-        }
-        
-        const priority = ['local_wifi', 'webrtc', 'cellular'];
-        return priority.find(p => available.includes(p)) || 'cellular';
-    }
-
-    getPreferredMessageProtocol(participant) {
-        const available = this.getAvailableProtocols();
-        const priority = ['local_chat', 'webrtc_data', 'sms'];
-        return priority.find(p => available.includes(p)) || 'sms';
-    }
-
-    getAvailableProtocols() {
-        const available = ['cellular', 'sms'];
-        
-        if (protocolStatus.I.active) {
-            available.push('webrtc', 'webrtc_data');
-        }
-        if (protocolStatus.W.active) {
-            available.push('local_wifi', 'local_chat');
-        }
-        
-        return available;
     }
 
     showNotification(message) {
@@ -238,7 +177,6 @@ class AllO_G_Communicator {
             border-radius: 8px;
             z-index: 2000;
             backdrop-filter: blur(10px);
-            animation: slideInRight 0.3s ease;
         `;
         notification.textContent = message;
         document.body.appendChild(notification);
@@ -270,7 +208,7 @@ class AllO_G_Communicator {
                             statusElement.textContent = `🟢${status.clients}`;
                             break;
                         case 'Z':
-                            statusElement.textContent = `🟢ON`;
+                            statusElement.textContent = `��ON`;
                             break;
                     }
                 } else {
@@ -283,7 +221,7 @@ class AllO_G_Communicator {
 
     getBatteryIcon(battery) {
         if (battery > 75) return '🔋';
-        if (battery > 50) return '��';
+        if (battery > 50) return '🔋';
         if (battery > 25) return '🪫';
         return '🪫';
     }
@@ -310,19 +248,6 @@ class AllO_G_Communicator {
                 this.hideContextMenu();
             }
         });
-
-        // Обработка кнопки "Назад" для закрытия портфолио
-        window.addEventListener('popstate', (e) => {
-            const profilePopup = document.getElementById('participantProfilePopup');
-            if (profilePopup && profilePopup.classList.contains('show')) {
-                this.popupManager.hideParticipantProfile();
-                e.preventDefault();
-            }
-        });
-
-        setInterval(() => {
-            this.updateProtocolStatus();
-        }, 30000);
     }
 
     hideContextMenu() {
@@ -369,9 +294,373 @@ class AllO_G_Communicator {
         
         this.participants.set(newParticipant.id, newParticipant);
         this.renderParticipants();
-        this.popupManager.hideCreateParticipant();
+        this.hideCreateParticipant();
         this.showNotification(`✅ Участник ${callsign} добавлен`);
     }
+
+    showCreateParticipant() {
+        const popup = document.getElementById('createParticipantPopup');
+        popup.classList.add('show');
+        document.getElementById('participantForm').reset();
+    }
+
+    hideCreateParticipant() {
+        const popup = document.getElementById('createParticipantPopup');
+        popup.classList.remove('show');
+    }
+
+    showQuickContact() {
+        const popup = document.getElementById('quickContactPopup');
+        popup.classList.add('show');
+    }
+
+    hideQuickContact() {
+        const popup = document.getElementById('quickContactPopup');
+        popup.classList.remove('show');
+    }
+
+    showParticipantProfile(participantId) {
+        const participant = this.participants.get(participantId);
+        if (!participant) return;
+
+        const popup = document.getElementById('participantProfilePopup');
+        if (!popup) {
+            this.createParticipantProfilePopup();
+        }
+        
+        this.populateParticipantProfile(participant);
+        document.getElementById('participantProfilePopup').classList.add('show');
+    }
+
+    createParticipantProfilePopup() {
+        const popupHTML = `
+            <div class="popup-overlay" id="participantProfilePopup" onclick="hideParticipantProfile()">
+                <div class="popup-content" onclick="event.stopPropagation()">
+                    <div class="popup-header">
+                        <h3 id="profileTitle">Портфолио участника</h3>
+                        <button class="popup-close" onclick="hideParticipantProfile()">×</button>
+                    </div>
+                    <div class="popup-body" id="profileBody">
+                    </div>
+                </div>
+            </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', popupHTML);
+    }
+
+    populateParticipantProfile(participant) {
+        const title = document.getElementById('profileTitle');
+        const body = document.getElementById('profileBody');
+        
+        title.textContent = `${participant.callsign} - Портфолио`;
+        
+        const batteryIcon = this.getBatteryIcon(participant.status.battery);
+        const lastSeenText = this.formatLastSeen(participant.status.lastSeen);
+        const statusIcon = participant.status.online ? '🟢' : '🔴';
+        const favoriteIcon = participant.isFavorite ? '⭐' : '☆';
+        const blockedStatus = participant.blocked ? '🚫 Заблокирован' : '✅ Активен';
+        
+        body.innerHTML = `
+            <div class="profile-section">
+                <div class="profile-avatar">${participant.avatar}</div>
+                <div class="profile-basic">
+                    <h3>${participant.callsign} ${favoriteIcon}</h3>
+                    <p>${participant.realName || 'Имя не указано'}</p>
+                    <p>📞 ${participant.phone}</p>
+                    <p class="block-status ${participant.blocked ? 'blocked' : 'active'}">${blockedStatus}</p>
+                </div>
+            </div>
+            
+            <div class="profile-section">
+                <h4>📊 Статус</h4>
+                <div class="status-grid">
+                    <div class="status-item">
+                        <span class="status-label">Присутствие:</span>
+                        <span class="status-value">${statusIcon} ${participant.status.online ? 'Онлайн' : 'Офлайн'}</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Батарея:</span>
+                        <span class="status-value">${batteryIcon} ${participant.status.battery}%</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Активность:</span>
+                        <span class="status-value">${lastSeenText}</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Геолокация:</span>
+                        <span class="status-value">📍 ${participant.status.location === 'known' ? 'Известна' : 'Неизвестна'}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="profile-actions">
+                <button class="btn-primary" onclick="app.makeCall('${participant.id}')" ${participant.blocked ? 'disabled' : ''}>📞 Позвонить</button>
+                <button class="btn-secondary" onclick="app.sendMessage('${participant.id}')" ${participant.blocked ? 'disabled' : ''}>💬 Сообщение</button>
+                <button class="btn-secondary" onclick="app.showLocation('${participant.id}')">📍 Местоположение</button>
+            </div>
+        `;
+    }
+
+    hideParticipantProfile() {
+        const popup = document.getElementById('participantProfilePopup');
+        if (popup) {
+            popup.classList.remove('show');
+        }
+    }
+}
+
+class PopupManager {
+    constructor(app) {
+        this.app = app;
+    }
+}
+
+class SwipeManager {
+    constructor(app) {
+        this.app = app;
+        this.touchStartX = 0;
+        this.touchStartY = 0;
+        this.swipeThreshold = 100;
+        this.setupSwipeHandlers();
+    }
+
+    setupSwipeHandlers() {
+        document.addEventListener('touchstart', (e) => {
+            this.touchStartX = e.touches[0].clientX;
+            this.touchStartY = e.touches[0].clientY;
+        });
+
+        document.addEventListener('touchend', (e) => {
+            if (!this.touchStartX || !this.touchStartY) return;
+
+            const touchEndX = e.changedTouches[0].clientX;
+            const touchEndY = e.changedTouches[0].clientY;
+            const deltaX = touchEndX - this.touchStartX;
+            const deltaY = touchEndY - this.touchStartY;
+
+            if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > this.swipeThreshold) {
+                const target = e.target.closest('.participant-card, .add-participant-card');
+                
+                if (target) {
+                    if (target.id === 'addParticipantCard') {
+                        if (deltaX > 0) {
+                            this.app.showQuickContact();
+                        } else {
+                            this.app.showCreateParticipant();
+                        }
+                    } else {
+                        const participantId = target.dataset.participantId;
+                        if (deltaX > 0) {
+                            this.app.sendMessage(participantId);
+                        } else {
+                            this.app.makeCall(participantId);
+                        }
+                    }
+                }
+            }
+
+            this.touchStartX = 0;
+            this.touchStartY = 0;
+        });
+    }
+}
+
+function showInfo() {
+    const popup = document.getElementById('infoPopup');
+    popup.classList.add('show');
+}
+
+function hideInfo() {
+    const popup = document.getElementById('infoPopup');
+    popup.classList.remove('show');
+}
+
+function showProtocolInfo(protocol) {
+    const popup = document.getElementById('protocolPopup');
+    const title = document.getElementById('protocolTitle');
+    const info = document.getElementById('protocolInfo');
+    
+    const status = protocolStatus[protocol];
+    const protocolNames = {
+        I: 'Интернет',
+        W: 'WiFi локальная сеть',
+        A: 'Точка доступа', 
+        Z: 'ZigBee сеть'
+    };
+    
+    title.textContent = protocolNames[protocol];
+    info.innerHTML = `
+        <div style="margin-bottom: 1rem;">
+            <strong>${status.description}</strong>
+        </div>
+        <div style="white-space: pre-line; font-size: 0.9rem; color: rgba(255,255,255,0.8);">
+            ${status.details}
+        </div>
+    `;
+    
+    popup.classList.add('show');
+}
+
+function hideProtocolInfo() {
+    const popup = document.getElementById('protocolPopup');
+    popup.classList.remove('show');
+}
+
+function showParticipantMenu(event, participantId) {
+    event.stopPropagation();
+    
+    const menu = document.getElementById('participantMenu');
+    const rect = event.target.getBoundingClientRect();
+    
+    menu.style.left = `${Math.min(rect.left - 150, window.innerWidth - 200)}px`;
+    menu.style.top = `${rect.bottom + 5}px`;
+    menu.classList.add('show');
+    
+    menu.dataset.participantId = participantId;
+}
+
+function openParticipantProfile(participantId) {
+    app.showParticipantProfile(participantId);
+}
+
+function viewHistory() {
+    const menu = document.getElementById('participantMenu');
+    const participantId = menu.dataset.participantId;
+    const participant = app.participants.get(participantId);
+    
+    if (participant) {
+        app.showNotification(`📋 История связи с ${participant.callsign} (в разработке)`);
+    }
+    app.hideContextMenu();
+}
+
+function manageRoles() {
+    const menu = document.getElementById('participantMenu');
+    const participantId = menu.dataset.participantId;
+    const participant = app.participants.get(participantId);
+    
+    if (participant) {
+        app.showNotification(`🎭 Управление ролями ${participant.callsign} (в разработке)`);
+    }
+    app.hideContextMenu();
+}
+
+function manageCommunications() {
+    const menu = document.getElementById('participantMenu');
+    const participantId = menu.dataset.participantId;
+    const participant = app.participants.get(participantId);
+    
+    if (participant) {
+        app.showNotification(`📞 Настройки связи с ${participant.callsign} (в разработке)`);
+    }
+    app.hideContextMenu();
+}
+
+function toggleParticipantBlock() {
+    const menu = document.getElementById('participantMenu');
+    const participantId = menu.dataset.participantId;
+    const participant = app.participants.get(participantId);
+    
+    if (participant) {
+        participant.blocked = !participant.blocked;
+        const status = participant.blocked ? 'заблокирован' : 'разблокирован';
+        app.showNotification(`🚫 ${participant.callsign} ${status}`);
+        app.renderParticipants();
+    }
+    app.hideContextMenu();
+}
+
+function toggleFavorite() {
+    const menu = document.getElementById('participantMenu');
+    const participantId = menu.dataset.participantId;
+    const participant = app.participants.get(participantId);
+    
+    if (participant) {
+        participant.isFavorite = !participant.isFavorite;
+        app.renderParticipants();
+        
+        const status = participant.isFavorite ? 'добавлен в избранное' : 'удален из избранного';
+        app.showNotification(`⭐ ${participant.callsign} ${status}`);
+    }
+    
+    app.hideContextMenu();
+}
+
+function removeParticipant() {
+    const menu = document.getElementById('participantMenu');
+    const participantId = menu.dataset.participantId;
+    const participant = app.participants.get(participantId);
+    
+    if (participant && confirm(`Удалить ${participant.callsign} из списка?`)) {
+        app.participants.delete(participantId);
+        app.renderParticipants();
+        app.showNotification(`🗑️ ${participant.callsign} удален`);
+    }
+    
+    app.hideContextMenu();
+}
+
+function openDialer() {
+    app.showNotification('📞 Функции связи (в разработке)');
+}
+
+function openGroupActions() {
+    app.showNotification('👥 Групповые действия (в разработке)');
+}
+
+function openMap() {
+    app.showNotification('📍 Карта участников (в разработке)');
+}
+
+function openVoiceCommands() {
+    app.showNotification('🎤 Голосовые команды (в разработке)');
+}
+
+function openHelp() {
+    app.showNotification('❓ Справочная система (в разработке)');
+}
+
+function openSettings() {
+    app.showNotification('⚙️ Настройки (в разработке)');
+}
+
+function openIncognitoCall() {
+    app.hideQuickContact();
+    
+    const number = prompt('Введите номер телефона:');
+    if (number) {
+        window.location.href = `tel:${number}`;
+    }
+}
+
+function openCallsignSearch() {
+    app.hideQuickContact();
+    
+    const callsign = prompt('Введите позывной для поиска:');
+    if (callsign) {
+        app.showNotification(`🔍 Поиск "${callsign}" в сетях...`);
+    }
+}
+
+function searchInNetwork() {
+    app.hideQuickContact();
+    app.showNotification('🔍 Поиск участников в локальной сети...');
+}
+
+function saveParticipant(event) {
+    app.saveParticipant(event);
+}
+
+function hideCreateParticipant() {
+    app.hideCreateParticipant();
+}
+
+function hideQuickContact() {
+    app.hideQuickContact();
+}
+
+function hideParticipantProfile() {
+    app.hideParticipantProfile();
 }
 
 let app;
