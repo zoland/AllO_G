@@ -784,3 +784,22 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+// Глобальные функции для совместимости
+function openParticipantProfile(participantId) {
+    app.showParticipantProfileWithFooter(participantId);
+}
+
+function hideParticipantProfile() {
+    app.hideParticipantProfileAndRestoreFooter();
+}
+}
+
+// Глобальные функции для совместимости  
+function openParticipantProfile(participantId) {
+    app.showParticipantProfileWithFooter(participantId);
+}
+
+function hideParticipantProfile() {
+    app.hideParticipantProfileAndRestoreFooter();
+}
