@@ -409,11 +409,6 @@ class AllO_G_Communicator {
     }
 }
 
-class PopupManager {
-    constructor(app) {
-        this.app = app;
-    }
-}
 
 class SwipeManager {
     constructor(app) {
@@ -667,3 +662,39 @@ let app;
 document.addEventListener('DOMContentLoaded', () => {
     app = new AllO_G_Communicator();
 });
+
+    showLocation(participantId) {
+        const participant = this.participants.get(participantId);
+        if (participant) {
+            this.showNotification(`📍 Местоположение ${participant.callsign}: ${participant.status.location}`);
+        }
+    }
+
+    viewHistory(participantId) {
+        const participant = this.participants.get(participantId);
+        if (participant) {
+            this.showNotification(`�� История связи с ${participant.callsign} (в разработке)`);
+        }
+    }
+
+    toggleFavoriteQuick(participantId) {
+        const participant = this.participants.get(participantId);
+        if (participant) {
+            participant.isFavorite = !participant.isFavorite;
+            this.renderParticipants();
+            
+            const status = participant.isFavorite ? 'добавлен в избранное' : 'удален из избранного';
+            this.showNotification(`⭐ ${participant.callsign} ${status}`);
+        }
+    }
+
+    toggleBlockQuick(participantId) {
+        const participant = this.participants.get(participantId);
+        if (participant) {
+            participant.blocked = !participant.blocked;
+            this.renderParticipants();
+            
+            const status = participant.blocked ? 'заблокирован' : 'разблокирован';
+            this.showNotification(`${participant.blocked ? '��' : '✅'} ${participant.callsign} ${status}`);
+        }
+    }

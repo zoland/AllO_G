@@ -924,3 +924,49 @@ body {
         font-size: 1rem;
     }
 }
+    transform: scale(1.1);
+}
+
+.action-icon.active {
+    background: var(--success);
+    color: white;
+    border-color: var(--success);
+}
+
+.action-icon.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.blocked-overlay {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    font-size: 1.2rem;
+    z-index: 10;
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.participant-avatar.blocked {
+    opacity: 0.5;
+    filter: grayscale(100%);
+}
+
+@media (max-width: 480px) {
+    .participant-actions {
+        padding: 0.5rem;
+    }
+    
+    .action-icon {
+        width: 32px;
+        height: 32px;
+        font-size: 1rem;
+    }
+}
