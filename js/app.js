@@ -12,7 +12,7 @@ class AllO_G_Communicator {
         this.loadParticipants();
         this.updateProtocolStatus();
         this.setupEventListeners();
-    }
+this.setupProfileCloseHandler();    }
 
     loadParticipants() {
         testParticipants.forEach(participant => {
@@ -52,7 +52,7 @@ class AllO_G_Communicator {
 
         card.innerHTML = `
             ${blockedOverlay}
-            <div class="participant-header" onclick="openParticipantProfile('${participant.id}')">
+            <div class="participant-header" onclick="app.showParticipantProfileWithFooter('${participant.id}')">
                 <div class="participant-avatar ${participant.blocked ? 'blocked' : ''}">${participant.avatar}</div>
                 <div class="participant-info">
                     <div class="participant-name">
@@ -74,8 +74,6 @@ class AllO_G_Communicator {
                     </div>
                 </div>
             </div>
-            <div class="participant-actions">
-                <div class="action-icon ${participant.blocked ? 'disabled' : ''}" onclick="app.makeCall('${participant.id}')" title="Позвонить">📞</div>
                 <div class="action-icon ${participant.blocked ? 'disabled' : ''}" onclick="app.sendMessage('${participant.id}')" title="Сообщение">💬</div>
                 <div class="action-icon" onclick="app.showLocation('${participant.id}')" title="Местоположение">��</div>
                 <div class="action-icon" onclick="app.viewHistory('${participant.id}')" title="История">📋</div>
@@ -515,7 +513,7 @@ function showParticipantMenu(event, participantId) {
 }
 
 function openParticipantProfile(participantId) {
-    app.showParticipantProfile(participantId);
+    app.showParticipantProfileWithFooter(participantId);
 }
 
 function viewHistory() {
@@ -655,7 +653,7 @@ function hideQuickContact() {
 }
 
 function hideParticipantProfile() {
-    app.hideParticipantProfile();
+    app.hideParticipantProfileAndRestoreFooter();
 }
 
 let app;
@@ -697,4 +695,92 @@ document.addEventListener('DOMContentLoaded', () => {
             const status = participant.blocked ? 'заблокирован' : 'разблокирован';
             this.showNotification(`${participant.blocked ? '��' : '✅'} ${participant.callsign} ${status}`);
         }
+    }
+
+    showParticipantProfileWithFooter(participantId) {
+        const participant = this.participants.get(participantId);
+        if (!participant) return;
+
+        this.showParticipantProfile(participantId);
+        
+        // Заменяем футер на действия участника
+        const footer = document.getElementById('actionsSection');
+        footer.innerHTML = `
+            <div class="action-btn ${participant.blocked ? 'disabled' : ''}" onclick="app.makeCall('${participantId}')">
+                <div class="action-icon-footer">📞</div>
+                <div class="action-label">Позвонить</div>
+            </div>
+            <div class="action-btn ${participant.blocked ? 'disabled' : ''}" onclick="app.sendMessage('${participantId}')">
+                <div class="action-icon-footer">💬</div>
+                <div class="action-label">Сообщение</div>
+            </div>
+            <div class="action-btn" onclick="app.showLocation('${participantId}')">
+                <div class="action-icon-footer">📍</div>
+                <div class="action-label">Местоположение</div>
+            </div>
+            <div class="action-btn" onclick="app.viewHistory('${participantId}')">
+                <div class="action-icon-footer">📋</div>
+                <div class="action-label">История</div>
+            </div>
+            <div class="action-btn" onclick="app.toggleFavoriteQuick('${participantId}')">
+                <div class="action-icon-footer">${participant.isFavorite ? '⭐' : '☆'}</div>
+                <div class="action-label">Избранное</div>
+            </div>
+            <div class="action-btn" onclick="app.toggleBlockQuick('${participantId}')">
+                <div class="action-icon-footer">${participant.blocked ? '🚫' : '🔓'}</div>
+                <div class="action-label">Блокировка</div>
+            </div>
+        `;
+        
+        footer.dataset.participantId = participantId;
+        footer.classList.add('participant-footer');
+    }
+
+    restoreMainFooter() {
+        const footer = document.getElementById('actionsSection');
+        footer.innerHTML = `
+            <div class="action-btn" onclick="openDialer()">
+                <div class="action-icon-footer">📞</div>
+                <div class="action-label">Связь</div>
+            </div>
+            <div class="action-btn" onclick="openGroupActions()">
+                <div class="action-icon-footer">👥</div>
+                <div class="action-label">Группа</div>
+            </div>
+            <div class="action-btn" onclick="openMap()">
+                <div class="action-icon-footer">📍</div>
+                <div class="action-label">Карта</div>
+            </div>
+            <div class="action-btn" onclick="openVoiceCommands()">
+                <div class="action-icon-footer">🎤</div>
+                <div class="action-label">Голос</div>
+            </div>
+            <div class="action-btn" onclick="openHelp()">
+                <div class="action-icon-footer">❓</div>
+                <div class="action-label">Справка</div>
+            </div>
+            <div class="action-btn" onclick="openSettings()">
+                <div class="action-icon-footer">⚙️</div>
+                <div class="action-label">Настройки</div>
+            </div>
+        `;
+        
+        footer.removeAttribute('data-participant-id');
+        footer.classList.remove('participant-footer');
+    }
+
+    hideParticipantProfileAndRestoreFooter() {
+        this.hideParticipantProfile();
+        this.restoreMainFooter();
+    }
+
+    setupProfileCloseHandler() {
+        document.addEventListener('click', (e) => {
+            const profilePopup = document.getElementById('participantProfilePopup');
+            if (profilePopup && profilePopup.classList.contains('show')) {
+                if (e.target === profilePopup) {
+                    this.hideParticipantProfileAndRestoreFooter();
+                }
+            }
+        });
     }

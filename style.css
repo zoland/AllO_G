@@ -970,3 +970,12 @@ body {
         font-size: 1rem;
     }
 }
+
+.participant-footer .action-btn.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.participant-footer .action-btn.disabled .action-icon-footer {
+    filter: grayscale(100%);
+}
