@@ -43,27 +43,27 @@
 
         <footer class="actions-section" id="actionsSection">
             <div class="action-btn" onclick="openDialer()">
-                <div class="action-icon">📞</div>
+                <div class="action-icon-footer">📞</div>
                 <div class="action-label">Связь</div>
             </div>
             <div class="action-btn" onclick="openGroupActions()">
-                <div class="action-icon">👥</div>
+                <div class="action-icon-footer">👥</div>
                 <div class="action-label">Группа</div>
             </div>
             <div class="action-btn" onclick="openMap()">
-                <div class="action-icon">📍</div>
+                <div class="action-icon-footer">📍</div>
                 <div class="action-label">Карта</div>
             </div>
             <div class="action-btn" onclick="openVoiceCommands()">
-                <div class="action-icon">🎤</div>
+                <div class="action-icon-footer">🎤</div>
                 <div class="action-label">Голос</div>
             </div>
             <div class="action-btn" onclick="openHelp()">
-                <div class="action-icon">❓</div>
+                <div class="action-icon-footer">❓</div>
                 <div class="action-label">Справка</div>
             </div>
             <div class="action-btn" onclick="openSettings()">
-                <div class="action-icon">⚙️</div>
+                <div class="action-icon-footer">⚙️</div>
                 <div class="action-label">Настройки</div>
             </div>
         </footer>
@@ -82,13 +82,14 @@
                 </div>
                 <div class="features">
                     <div>📞 Мультипротокольная связь</div>
-                    <div>�� Управление участниками</div>
+                    <div>👥 Управление участниками</div>
                     <div>🌐 Локальные и интернет-соединения</div>
                     <div>🎭 Гибкая система ролей в сценах</div>
                     <div>⭐ Система избранного</div>
                     <div>📢 Вызов по позывным</div>
                     <div>🧩 Модульная архитектура</div>
                     <div>👤 Тап для портфолио</div>
+                    <div>🎯 Иконки действий в карточках</div>
                 </div>
                 <div class="author">Автор: ZolAnd</div>
                 <div class="build">Build: 2024.01.15</div>
@@ -190,9 +191,6 @@
     </div>
 
     <script src="js/participants.js"></script>
-    <script src="js/popup-manager.js"></script>
-    <script src="js/swipe-manager.js"></script>
-    <script src="js/ui-handlers.js"></script>
     <script src="js/app.js"></script>
     <script>
         if ("serviceWorker" in navigator) {

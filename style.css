@@ -1,16 +1,14 @@
-/* AllO_G v1.1.1 - Исправленные стили */
 :root {
-    --primary-gradient: linear-gradient(135deg, #1976D2 0%, #1565C0 100%);
-    --secondary-gradient: linear-gradient(135deg, #42A5F5 0%, #2196F3 100%);
-    --card-bg: rgba(255, 255, 255, 0.1);
-    --card-border: rgba(255, 255, 255, 0.2);
-    --text-primary: #FFFFFF;
-    --text-secondary: rgba(255, 255, 255, 0.8);
+    --primary: #1976D2;
+    --primary-dark: #1565C0;
+    --secondary: #424242;
     --success: #4CAF50;
     --warning: #FF9800;
     --danger: #F44336;
-    --offline: rgba(255, 255, 255, 0.3);
-    --favorite: #FFD700;
+    --text-primary: rgba(255, 255, 255, 0.95);
+    --text-secondary: rgba(255, 255, 255, 0.7);
+    --card-bg: rgba(255, 255, 255, 0.1);
+    --card-border: rgba(255, 255, 255, 0.2);
 }
 
 * {
@@ -21,25 +19,18 @@
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: var(--primary-gradient);
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
     color: var(--text-primary);
-    min-height: 100vh;
-    overflow-x: hidden;
-}
-
-/* Принудительное обновление кеша */
-body::before {
-    content: "v1.1.1";
-    display: none;
+    height: 100vh;
+    overflow: hidden;
 }
 
 #app {
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
+    height: 100vh;
 }
 
-/* Верхняя секция с протоколами */
 .header {
     display: flex;
     justify-content: space-between;
@@ -48,63 +39,66 @@ body::before {
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--card-border);
+    flex-shrink: 0;
 }
 
 .logo {
-    font-size: 1.2rem;
+    font-size: 1.5rem;
     font-weight: bold;
     cursor: pointer;
-    padding: 0.5rem;
-    border-radius: 8px;
-    transition: background 0.3s ease;
+    transition: transform 0.3s ease;
 }
 
 .logo:hover {
-    background: rgba(255, 255, 255, 0.1);
+    transform: scale(1.05);
 }
 
 .protocols {
     display: flex;
-    gap: 0.75rem;
+    gap: 0.5rem;
 }
 
 .protocol-item {
     display: flex;
+    flex-direction: column;
     align-items: center;
     gap: 0.25rem;
+    padding: 0.5rem;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--card-border);
     cursor: pointer;
-    padding: 0.25rem 0.5rem;
-    border-radius: 12px;
-    transition: background 0.3s ease;
+    transition: all 0.3s ease;
+    min-width: 50px;
 }
 
 .protocol-item:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
 }
 
 .protocol-letter {
     font-weight: bold;
-    font-size: 0.9rem;
-    width: 16px;
-    text-align: center;
+    font-size: 1rem;
 }
 
 .protocol-status {
-    font-size: 0.8rem;
-    white-space: nowrap;
+    font-size: 0.7rem;
 }
 
-/* Участники */
 .participants-section {
     flex: 1;
-    padding: 1rem;
     overflow-y: auto;
+    padding: 1rem;
+    min-height: 0;
 }
 
 .participants-list {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 1rem;
+    max-width: 800px;
+    margin: 0 auto;
 }
 
 .participant-card {
@@ -112,14 +106,11 @@ body::before {
     backdrop-filter: blur(10px);
     border: 1px solid var(--card-border);
     border-radius: 12px;
-    padding: 1rem;
     display: flex;
-    align-items: center;
-    gap: 1rem;
+    flex-direction: column;
     transition: all 0.3s ease;
     position: relative;
-    cursor: pointer;
-    touch-action: pan-y;
+    overflow: hidden;
 }
 
 .participant-card:hover {
@@ -128,21 +119,30 @@ body::before {
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
-.participant-card.selected {
-    border-color: var(--success);
-    background: rgba(76, 175, 80, 0.1);
+.participant-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    cursor: pointer;
 }
 
 .participant-avatar {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    background: var(--secondary-gradient);
+    font-size: 2.5rem;
+    width: 60px;
+    height: 60px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.5rem;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid var(--card-border);
     flex-shrink: 0;
+}
+
+.participant-avatar.blocked {
+    opacity: 0.5;
+    filter: grayscale(100%);
 }
 
 .participant-info {
@@ -151,8 +151,8 @@ body::before {
 }
 
 .participant-name {
+    font-size: 1.2rem;
     font-weight: bold;
-    font-size: 1.1rem;
     margin-bottom: 0.25rem;
     display: flex;
     align-items: center;
@@ -160,8 +160,7 @@ body::before {
 }
 
 .favorite-star {
-    color: var(--favorite);
-    font-size: 1rem;
+    color: var(--warning);
 }
 
 .participant-details {
@@ -170,21 +169,17 @@ body::before {
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    flex-wrap: wrap;
 }
 
 .participant-menu {
-    position: absolute;
-    top: 0.5rem;
-    right: 0.5rem;
+    padding: 0.5rem;
     cursor: pointer;
-    padding: 0.25rem;
-    border-radius: 4px;
-    opacity: 0.7;
-    transition: opacity 0.3s ease;
+    border-radius: 8px;
+    transition: background 0.3s ease;
 }
 
 .participant-menu:hover {
-    opacity: 1;
     background: rgba(255, 255, 255, 0.1);
 }
 
@@ -195,52 +190,104 @@ body::before {
 }
 
 .menu-dot {
-    width: 3px;
-    height: 3px;
-    border-radius: 50%;
+    width: 4px;
+    height: 4px;
     background: var(--text-secondary);
+    border-radius: 50%;
 }
 
-/* ИСПРАВЛЕНО: Карточка добавления участника без лишних стрелок */
+.participant-actions {
+    display: flex;
+    justify-content: space-around;
+    padding: 0.75rem 1rem;
+    border-top: 1px solid var(--card-border);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.action-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--card-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1.2rem;
+}
+
+.action-icon:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.1);
+}
+
+.action-icon.active {
+    background: var(--success);
+    color: white;
+    border-color: var(--success);
+}
+
+.action-icon.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.blocked-overlay {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    font-size: 1.2rem;
+    z-index: 10;
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .add-participant-card {
-    background: var(--card-bg);
+    background: rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(10px);
     border: 2px dashed var(--card-border);
     border-radius: 12px;
-    padding: 1rem;
+    padding: 2rem;
     text-align: center;
     cursor: pointer;
     transition: all 0.3s ease;
-    position: relative;
-    touch-action: pan-y;
 }
 
 .add-participant-card:hover {
+    background: rgba(255, 255, 255, 0.1);
     border-color: var(--success);
-    background: rgba(76, 175, 80, 0.05);
+    transform: translateY(-2px);
 }
 
 .add-participant-title {
-    font-size: 1.1rem;
+    font-size: 1.3rem;
     font-weight: bold;
     margin-bottom: 0.5rem;
+    color: var(--success);
 }
 
 .add-participant-hints {
-    font-size: 0.8rem;
+    font-size: 0.9rem;
     color: var(--text-secondary);
-    line-height: 1.3;
+    line-height: 1.4;
 }
 
-/* Нижняя панель */
 .actions-section {
-    display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    gap: 0.5rem;
+    display: flex;
+    justify-content: space-around;
     padding: 1rem;
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
     border-top: 1px solid var(--card-border);
+    flex-shrink: 0;
 }
 
 .action-btn {
@@ -248,11 +295,11 @@ body::before {
     flex-direction: column;
     align-items: center;
     gap: 0.25rem;
-    padding: 0.75rem 0.5rem;
+    padding: 0.75rem;
     border-radius: 12px;
     cursor: pointer;
     transition: all 0.3s ease;
-    text-align: center;
+    min-width: 60px;
 }
 
 .action-btn:hover {
@@ -260,52 +307,58 @@ body::before {
     transform: translateY(-2px);
 }
 
-.action-btn.active {
-    background: var(--success);
-    color: white;
-}
-
-.action-icon {
+.action-icon-footer {
     font-size: 1.5rem;
+    margin-bottom: 0.25rem;
 }
 
 .action-label {
-    font-size: 0.75rem;
+    font-size: 0.8rem;
     color: var(--text-secondary);
+    text-align: center;
 }
 
-/* Popup стили */
 .popup-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: none;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(5px);
+    z-index: 1000;
+    display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 1000;
-    backdrop-filter: blur(5px);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
 }
 
 .popup-overlay.show {
-    display: flex;
+    opacity: 1;
+    visibility: visible;
 }
 
 .popup-content {
-    background: var(--primary-gradient);
+    background: var(--card-bg);
+    backdrop-filter: blur(20px);
     border: 1px solid var(--card-border);
     border-radius: 16px;
-    max-width: 90%;
-    width: 400px;
+    max-width: 500px;
+    width: 90%;
     max-height: 80vh;
     overflow-y: auto;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    transform: scale(0.9);
+    transition: transform 0.3s ease;
+}
+
+.popup-overlay.show .popup-content {
+    transform: scale(1);
 }
 
 .popup-content.small {
-    width: 300px;
+    max-width: 300px;
 }
 
 .popup-header {
@@ -344,7 +397,55 @@ body::before {
     padding: 1.5rem;
 }
 
-/* Формы */
+.version {
+    font-size: 0.9rem;
+    color: var(--success);
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.description {
+    margin-bottom: 1rem;
+    line-height: 1.5;
+}
+
+.features {
+    margin-bottom: 1rem;
+}
+
+.features > div {
+    padding: 0.25rem 0;
+    font-size: 0.9rem;
+}
+
+.author, .build {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+}
+
+.help-section {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--card-border);
+}
+
+.help-btn {
+    background: var(--success);
+    color: white;
+    border: none;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background 0.3s ease;
+    width: 100%;
+}
+
+.help-btn:hover {
+    background: #45a049;
+}
+
 .form-group {
     margin-bottom: 1rem;
 }
@@ -353,7 +454,7 @@ body::before {
     display: block;
     margin-bottom: 0.5rem;
     font-weight: bold;
-    font-size: 0.9rem;
+    color: var(--text-primary);
 }
 
 .form-group input,
@@ -365,6 +466,13 @@ body::before {
     background: rgba(255, 255, 255, 0.1);
     color: var(--text-primary);
     font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: var(--success);
 }
 
 .form-group input::placeholder {
@@ -408,7 +516,7 @@ body::before {
     border-radius: 8px;
     font-size: 1rem;
     cursor: pointer;
-    transition: background 0.3s ease;
+    transition: all 0.3s ease;
 }
 
 .btn-primary {
@@ -418,6 +526,7 @@ body::before {
 
 .btn-primary:hover {
     background: #45a049;
+    transform: translateY(-1px);
 }
 
 .btn-secondary {
@@ -427,10 +536,10 @@ body::before {
 }
 
 .btn-secondary:hover {
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-1px);
 }
 
-/* Оперативная связь */
 .quick-contact-options {
     display: flex;
     flex-direction: column;
@@ -442,7 +551,7 @@ body::before {
     align-items: center;
     gap: 1rem;
     padding: 1rem;
-    background: var(--card-bg);
+    background: rgba(255, 255, 255, 0.05);
     border: 1px solid var(--card-border);
     border-radius: 12px;
     cursor: pointer;
@@ -450,14 +559,20 @@ body::before {
 }
 
 .quick-option:hover {
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.1);
     transform: translateY(-2px);
 }
 
 .option-icon {
     font-size: 2rem;
     width: 60px;
-    text-align: center;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid var(--card-border);
 }
 
 .option-content {
@@ -465,8 +580,8 @@ body::before {
 }
 
 .option-title {
-    font-weight: bold;
     font-size: 1.1rem;
+    font-weight: bold;
     margin-bottom: 0.25rem;
 }
 
@@ -475,30 +590,35 @@ body::before {
     color: var(--text-secondary);
 }
 
-/* Контекстное меню */
 .context-menu {
     position: fixed;
     background: var(--card-bg);
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(20px);
     border: 1px solid var(--card-border);
-    border-radius: 8px;
+    border-radius: 12px;
     padding: 0.5rem 0;
-    display: none;
-    z-index: 1001;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    z-index: 1500;
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(0.9);
+    transition: all 0.3s ease;
     min-width: 180px;
 }
 
 .context-menu.show {
-    display: block;
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1);
 }
 
 .menu-item {
     padding: 0.75rem 1rem;
     cursor: pointer;
     transition: background 0.3s ease;
-    white-space: nowrap;
     font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 .menu-item:hover {
@@ -509,131 +629,10 @@ body::before {
     color: var(--danger);
 }
 
-/* Справка */
-.help-section {
-    margin-top: 1rem;
-    padding-top: 1rem;
-    border-top: 1px solid var(--card-border);
+.menu-item.warning {
+    color: var(--warning);
 }
 
-.help-btn {
-    width: 100%;
-    padding: 0.75rem;
-    background: var(--secondary-gradient);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: opacity 0.3s ease;
-}
-
-.help-btn:hover {
-    opacity: 0.9;
-}
-
-/* Версия информации */
-.version {
-    font-size: 0.9rem;
-    color: var(--text-secondary);
-    margin-bottom: 0.5rem;
-}
-
-.description {
-    font-size: 1rem;
-    margin-bottom: 1rem;
-    line-height: 1.4;
-}
-
-.features {
-    margin-bottom: 1rem;
-}
-
-.features div {
-    margin-bottom: 0.5rem;
-    font-size: 0.9rem;
-}
-
-.author, .build {
-    font-size: 0.8rem;
-    color: var(--text-secondary);
-    margin-bottom: 0.25rem;
-}
-
-/* Адаптивность */
-@media (max-width: 480px) {
-    .actions-section {
-        grid-template-columns: repeat(3, 1fr);
-    }
-    
-    .action-label {
-        font-size: 0.7rem;
-    }
-    
-    .participant-card {
-        padding: 0.75rem;
-    }
-    
-    .popup-content {
-        margin: 1rem;
-        width: auto;
-        max-height: 85vh;
-    }
-    
-    .protocols {
-        gap: 0.5rem;
-    }
-    
-    .protocol-status {
-        font-size: 0.7rem;
-    }
-}
-
-/* Анимации */
-@keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes slideInRight {
-    from {
-        opacity: 0;
-        transform: translateX(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-.participant-card {
-    animation: slideIn 0.3s ease;
-}
-
-/* Скроллбар */
-.participants-section::-webkit-scrollbar,
-.popup-content::-webkit-scrollbar {
-    width: 4px;
-}
-
-.participants-section::-webkit-scrollbar-track,
-.popup-content::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.1);
-}
-
-.participants-section::-webkit-scrollbar-thumb,
-.popup-content::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.3);
-    border-radius: 2px;
-}
-
-/* Стили для портфолио участника */
 .profile-section {
     margin-bottom: 1.5rem;
     padding-bottom: 1rem;
@@ -752,35 +751,6 @@ body::before {
     transition: all 0.3s ease;
 }
 
-@media (max-width: 480px) {
-    .status-grid,
-    .protocols-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .profile-actions {
-        flex-direction: column;
-    }
-    
-    .profile-actions button {
-        flex: none;
-    }
-}
-
-/* Стили для заблокированных участников */
-.participant-avatar.blocked {
-    opacity: 0.5;
-    filter: grayscale(100%);
-}
-
-.blocked-overlay {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    font-size: 1.2rem;
-    z-index: 10;
-}
-
 .block-status {
     font-size: 0.9rem;
     font-weight: bold;
@@ -808,10 +778,6 @@ body::before {
     background: #e68900;
 }
 
-.menu-item.warning {
-    color: var(--warning);
-}
-
 .profile-actions button:disabled {
     opacity: 0.5;
     cursor: not-allowed;
@@ -822,243 +788,134 @@ body::before {
     transform: none;
 }
 
-/* Обновленные стили карточки участника */
-.participant-card {
-    background: var(--card-bg);
-    backdrop-filter: blur(10px);
-    border: 1px solid var(--card-border);
-    border-radius: 12px;
-    display: flex;
-    flex-direction: column;
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
 }
 
-.participant-card:hover {
-    background: rgba(255, 255, 255, 0.15);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-}
-
-.participant-header {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 1rem;
-    cursor: pointer;
-}
-
-.participant-actions {
-    display: flex;
-    justify-content: space-around;
-    padding: 0.75rem 1rem;
-    border-top: 1px solid var(--card-border);
-    background: rgba(255, 255, 255, 0.05);
-}
-
-.action-icon {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid var(--card-border);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-size: 1.1rem;
-}
-
-.action-icon:hover {
-    background: rgba(255, 255, 255, 0.2);
-    transform: scale(1.1);
-}
-
-.action-icon.active {
-    background: var(--success);
-    color: white;
-}
-
-.action-icon.disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    pointer-events: none;
-}
-
-/* Стили для портфолио с улучшенной навигацией */
-.popup-header {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 1.5rem;
-    border-bottom: 1px solid var(--card-border);
-}
-
-.back-btn {
-    background: none;
-    border: none;
-    color: var(--text-primary);
-    font-size: 1.5rem;
-    cursor: pointer;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.3s ease;
-}
-
-.back-btn:hover {
-    background: rgba(255, 255, 255, 0.1);
-}
-
-.popup-header h3 {
-    flex: 1;
-    margin: 0;
-    font-size: 1.3rem;
-    text-align: center;
-}
-
-.popup-footer {
-    display: flex;
-    justify-content: space-between;
-    gap: 1rem;
-    padding: 1.5rem;
-    border-top: 1px solid var(--card-border);
-    background: rgba(255, 255, 255, 0.05);
-}
-
-.popup-footer button {
-    flex: 1;
-    padding: 0.75rem;
-    border: none;
-    border-radius: 8px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-/* Настройки в портфолио */
-.setting-input {
-    width: 100%;
-    padding: 0.5rem;
-    border: 1px solid var(--card-border);
-    border-radius: 6px;
-    background: rgba(255, 255, 255, 0.1);
-    color: var(--text-primary);
-    font-size: 0.9rem;
-    margin-top: 0.25rem;
-}
-
-.setting-input:focus {
-    outline: none;
-    border-color: var(--success);
-}
-
-/* Адаптивность для мобильных */
-@media (max-width: 480px) {
+@media (max-width: 768px) {
+    .header {
+        padding: 0.75rem;
+    }
+    
+    .logo {
+        font-size: 1.3rem;
+    }
+    
+    .protocol-item {
+        min-width: 45px;
+        padding: 0.4rem;
+    }
+    
+    .protocol-letter {
+        font-size: 0.9rem;
+    }
+    
+    .protocol-status {
+        font-size: 0.6rem;
+    }
+    
+    .participants-section {
+        padding: 0.75rem;
+    }
+    
+    .participant-header {
+        padding: 0.75rem;
+    }
+    
+    .participant-avatar {
+        font-size: 2rem;
+        width: 50px;
+        height: 50px;
+    }
+    
+    .participant-name {
+        font-size: 1.1rem;
+    }
+    
+    .participant-details {
+        font-size: 0.8rem;
+    }
+    
     .participant-actions {
         padding: 0.5rem;
     }
     
     .action-icon {
-        width: 32px;
-        height: 32px;
-        font-size: 1rem;
+        width: 36px;
+        height: 36px;
+        font-size: 1.1rem;
     }
     
-    .popup-footer {
+    .actions-section {
+        padding: 0.75rem;
+    }
+    
+    .action-btn {
+        padding: 0.5rem;
+        min-width: 50px;
+    }
+    
+    .action-icon-footer {
+        font-size: 1.3rem;
+    }
+    
+    .action-label {
+        font-size: 0.7rem;
+    }
+    
+    .popup-content {
+        width: 95%;
+        max-height: 90vh;
+    }
+    
+    .popup-header {
+        padding: 1rem;
+    }
+    
+    .popup-body {
+        padding: 1rem;
+    }
+    
+    .status-grid,
+    .protocols-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .profile-actions {
         flex-direction: column;
     }
     
-    .popup-footer button {
+    .profile-actions button {
         flex: none;
     }
 }
 
-.participant-card {
-    background: var(--card-bg);
-    backdrop-filter: blur(10px);
-    border: 1px solid var(--card-border);
-    border-radius: 12px;
-    display: flex;
-    flex-direction: column;
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-}
-
-.participant-card:hover {
-    background: rgba(255, 255, 255, 0.15);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-}
-
-.participant-header {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 1rem;
-    cursor: pointer;
-}
-
-.participant-actions {
-    display: flex;
-    justify-content: space-around;
-    padding: 0.75rem 1rem;
-    border-top: 1px solid var(--card-border);
-    background: rgba(255, 255, 255, 0.05);
-}
-
-.action-icon {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid var(--card-border);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-size: 1.1rem;
-}
-
-.action-icon:hover {
-    background: rgba(255, 255, 255, 0.2);
-    transform: scale(1.1);
-}
-
-.action-icon.active {
-    background: var(--success);
-    color: white;
-}
-
-.action-icon.disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    pointer-events: none;
-}
-
-.participant-avatar.blocked {
-    opacity: 0.5;
-    filter: grayscale(100%);
-}
-
-.blocked-overlay {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    font-size: 1.2rem;
-    z-index: 10;
-}
-
 @media (max-width: 480px) {
-    .participant-actions {
+    .participants-section {
         padding: 0.5rem;
+    }
+    
+    .participant-header {
+        padding: 0.5rem;
+        gap: 0.75rem;
+    }
+    
+    .participant-avatar {
+        font-size: 1.8rem;
+        width: 45px;
+        height: 45px;
+    }
+    
+    .participant-actions {
+        padding: 0.4rem;
+        gap: 0.25rem;
     }
     
     .action-icon {
